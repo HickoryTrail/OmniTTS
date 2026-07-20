@@ -1,4 +1,4 @@
-﻿namespace OmniTTS.Shared;
+namespace OmniTTS.Shared;
 
 public interface IOmniTTS
 {
