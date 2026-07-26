@@ -17,7 +17,7 @@ namespace OmniTTS.Plugin.Infrastructures
             internal required string Model { get; set; }
             internal required string Voice { get; set; }
             internal required float Speed { get; set; }
-            internal required string FileName { get; set; }
+            internal required string FilePath { get; set; }
         }
 
         internal class GeminiClient
@@ -68,13 +68,13 @@ namespace OmniTTS.Plugin.Infrastructures
                     if (response.IsSuccessful && !string.IsNullOrWhiteSpace(response.Content))
                     {
                         var pcm = GetPcmAudio(response.Content);
-                        var directory = Path.GetDirectoryName(option.FileName);
+                        var directory = Path.GetDirectoryName(option.FilePath);
                         if (!string.IsNullOrEmpty(directory))
                         {
                             Directory.CreateDirectory(directory);
                         }
 
-                        await WriteWaveFileAsync(option.FileName, pcm, cancellationToken);
+                        await WriteWaveFileAsync(option.FilePath, pcm, cancellationToken);
                         return;
                     }
 

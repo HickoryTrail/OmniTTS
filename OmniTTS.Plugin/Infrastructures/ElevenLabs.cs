@@ -15,7 +15,7 @@ namespace OmniTTS.Plugin.Infrastructures
             internal required string Model { get; set; }
             internal required string Voice { get; set; }
             internal required float Speed { get; set; }
-            internal required string FileName { get; set; }
+            internal required string FilePath { get; set; }
         }
 
         internal class ElevenLabsClient
@@ -57,13 +57,13 @@ namespace OmniTTS.Plugin.Infrastructures
                     var response = await client.ExecuteAsync(request, cancellationToken);
                     if (response.IsSuccessful && response.RawBytes is { Length: > 0 } audio)
                     {
-                        var directory = Path.GetDirectoryName(option.FileName);
+                        var directory = Path.GetDirectoryName(option.FilePath);
                         if (!string.IsNullOrEmpty(directory))
                         {
                             Directory.CreateDirectory(directory);
                         }
 
-                        await File.WriteAllBytesAsync(option.FileName, audio, cancellationToken);
+                        await File.WriteAllBytesAsync(option.FilePath, audio, cancellationToken);
                         return;
                     }
 

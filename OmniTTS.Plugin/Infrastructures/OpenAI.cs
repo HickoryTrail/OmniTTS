@@ -16,7 +16,7 @@ namespace OmniTTS.Plugin.Infrastructures
             internal required string Model { get; set; }
             internal required string Voice { get; set; }
             internal required float Speed { get; set; }
-            internal required string FileName { get; set; }
+            internal required string FilePath { get; set; }
         }
 
         internal class OpenAIClient
@@ -56,13 +56,13 @@ namespace OmniTTS.Plugin.Infrastructures
                     },
                     cancellationToken);
 
-                var directory = Path.GetDirectoryName(option.FileName);
+                var directory = Path.GetDirectoryName(option.FilePath);
                 if (!string.IsNullOrEmpty(directory))
                 {
                     Directory.CreateDirectory(directory);
                 }
 
-                await File.WriteAllBytesAsync(option.FileName, speech.Value.ToArray(), cancellationToken);
+                await File.WriteAllBytesAsync(option.FilePath, speech.Value.ToArray(), cancellationToken);
             }
         }
     }
