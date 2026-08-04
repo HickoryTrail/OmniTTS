@@ -280,6 +280,12 @@ namespace OmniTTS.Plugin.Services
                     speed = SettingsService.Setting.ProviderSetting.MiniMaxSetting.Speed;
                     volume = SettingsService.Setting.ProviderSetting.MiniMaxSetting.Volume;
                     break;
+                case Provider.MiMo:
+                    model = SettingsService.Setting.ProviderSetting.MiMoSetting.Model;
+                    voice = SettingsService.Setting.ProviderSetting.MiMoSetting.Voice;
+                    speed = SettingsService.Setting.ProviderSetting.MiMoSetting.Speed;
+                    volume = SettingsService.Setting.ProviderSetting.MiMoSetting.Volume;
+                    break;
             }
             option.Provider ??= SettingsService.Setting.DefaultProvider;
             option.Model ??= model;

@@ -8,6 +8,8 @@ internal static class ProviderUrlHelper
 
     internal static string NormalizeMiniMaxBaseUrl(string url) => Normalize(url, "v1/t2a_v2", "v1");
 
+    internal static string NormalizeMiMoBaseUrl(string url) => Normalize(url, "v1/chat/completions", "v1/chat", "v1");
+
     internal static string NormalizeGeminiBaseUrl(string url) => Normalize(url, "v1beta/interactions", "v1beta");
 
     internal static string NormalizeElevenLabsBaseUrl(string url) => Normalize(url, "v1/text-to-speech", "v1");

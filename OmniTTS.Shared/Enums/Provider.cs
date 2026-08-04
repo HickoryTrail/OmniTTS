@@ -7,5 +7,6 @@ public enum Provider
     Elevenlabs,
     OpenAI,
     Gemini,
-    MiniMax
+    MiniMax,
+    MiMo
 }
