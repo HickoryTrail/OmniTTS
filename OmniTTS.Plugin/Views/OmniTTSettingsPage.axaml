@@ -1,21 +1,27 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+<ci2:SettingsPageBase xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:fa="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia"
              xmlns:ci="clr-namespace:ClassIsland.Core.Controls;assembly=ClassIsland.Core"
-             x:Class="OmniTTS.Plugin.OmniTTSettingsPage">
+             xmlns:ci2="clr-namespace:ClassIsland.Core.Abstractions.Controls;assembly=ClassIsland.Core"
+             x:Class="OmniTTS.Plugin.OmniTTSettingsPage"
+             xmlns:vm="using:OmniTTS.Plugin.ViewModels"
+             x:DataType="vm:SettingsPageViewModel">
+    <ci2:SettingsPageBase.DataContext>
+		<vm:SettingsPageViewModel/>
+    </ci2:SettingsPageBase.DataContext>
   <ScrollViewer>
     <StackPanel Margin="16" Spacing="12">
       <ci:IconText Glyph="&#xEF27;" Text="基本设置" />
       <fa:FASettingsExpander IconSource="{ci:FluentIconSource &#xED53;}" Header="默认 TTS" Description="未指定提供方时使用的 TTS 提供方">
         <fa:FASettingsExpander.Footer>
-          <ComboBox x:Name="DefaultProviderComboBox" Width="180" SelectionChanged="DefaultProviderComboBox_SelectionChanged">
-            <ComboBoxItem Tag="None">未选择</ComboBoxItem>
-            <ComboBoxItem Tag="OpenAI">OpenAI</ComboBoxItem>
-            <ComboBoxItem Tag="Gemini">Gemini</ComboBoxItem>
-            <ComboBoxItem Tag="FishAudio">Fish Audio</ComboBoxItem>
-            <ComboBoxItem Tag="Elevenlabs">ElevenLabs</ComboBoxItem>
-            <ComboBoxItem Tag="MiniMax">MiniMax</ComboBoxItem>
-            <ComboBoxItem Tag="MiMo">MiMo</ComboBoxItem>
+          <ComboBox x:Name="DefaultProviderComboBox" Width="180"
+                    ItemsSource="{Binding Providers}"
+                    SelectedItem="{Binding SelectedProviderPair}">
+              <ComboBox.ItemTemplate>
+				 <DataTemplate>
+					<TextBlock Text="{Binding Value}"/> 
+                 </DataTemplate> 
+              </ComboBox.ItemTemplate>
           </ComboBox>
         </fa:FASettingsExpander.Footer>
 
@@ -23,12 +29,13 @@
         <fa:FASettingsExpander IconSource="{ci:FluentIconSource &#xED53;}" Header="最大并发量" Description="同时请求API的最大次数">
         <fa:FASettingsExpander.Footer>
           <StackPanel Orientation="Horizontal">
-			  <TextBlock Text="5" VerticalAlignment="Center" Margin="12,0" FontSize="15"/>
+			  <TextBlock VerticalAlignment="Center" Margin="12,0" FontSize="15" Text="{Binding MaxConcurrentRequests}"/>
               <Slider Minimum="1" Maximum="20"
                       TickFrequency="1"
                       IsSnapToTickEnabled="True"
                       VerticalAlignment="Center"
-                      Width="180"/>
+                      Width="180"
+                      Value="{Binding MaxConcurrentRequests}"/>
           </StackPanel>
         </fa:FASettingsExpander.Footer>
       </fa:FASettingsExpander>
@@ -44,4 +51,4 @@
       </fa:FASettingsExpander>
     </StackPanel>
   </ScrollViewer>
-</UserControl>
+</ci2:SettingsPageBase>
