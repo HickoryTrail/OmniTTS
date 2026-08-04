@@ -19,6 +19,7 @@ namespace OmniTTS.Plugin.Services
         private Infrastructures.FishAudio.FishAudioClient? FishAudioClient { get; set; }
         private Infrastructures.ElevenLabs.ElevenLabsClient? ElevenLabsClient { get; set; }
         private Infrastructures.MiniMax.MiniMaxClient? MiniMaxClient { get; set; }
+        private Infrastructures.MiMo.MiMoClient? MiMoClient { get; set; }
 
         internal GenerationService(ILogger<OmniTTService> logger, SettingsService settingsService)
         {
@@ -34,6 +35,9 @@ namespace OmniTTS.Plugin.Services
             if (settingsService.Setting.ProviderSetting.FishAudioSetting.IsEnabled) FishAudioClient = new Infrastructures.FishAudio.FishAudioClient();
             if (settingsService.Setting.ProviderSetting.ElevenLabsSetting.IsEnabled) ElevenLabsClient = new Infrastructures.ElevenLabs.ElevenLabsClient();
             if (settingsService.Setting.ProviderSetting.MiniMaxSetting.IsEnabled) MiniMaxClient = new Infrastructures.MiniMax.MiniMaxClient();
+            if (settingsService.Setting.ProviderSetting.MiMoSetting.IsEnabled) MiMoClient = new Infrastructures.MiMo.MiMoClient(
+                settingsService.Setting.ProviderSetting.MiMoSetting.BaseUrl,
+                settingsService.Setting.ProviderSetting.MiMoSetting.ApiKey);
         }
 
         internal void StartWorker(int num, Channel<RequestOption> channel)
@@ -119,6 +123,18 @@ namespace OmniTTS.Plugin.Services
                             FilePath = requestOption.FilePath,
                         };
                         await MiniMaxClient.GenerateAudioAsync(minimax_option, requestOption.Cts);
+                        break;
+                    case Provider.MiMo:
+                        if (MiMoClient == null) throw new InvalidOperationException("MiMoClient is not initialized.");
+                        var mimoOption = new Infrastructures.MiMo.MiMoOption
+                        {
+                            Model = requestOption.Model,
+                            Voice = requestOption.Voice,
+                            Text = requestOption.Text,
+                            Speed = requestOption.Speed,
+                            FilePath = requestOption.FilePath,
+                        };
+                        await MiMoClient.GenerateAudioAsync(mimoOption, requestOption.Cts);
                         break;
                     default:
                         throw new NotSupportedException($"Provider {requestOption.Provider} is not supported.");

@@ -2,6 +2,7 @@ using ClassIsland.Core;
 using ClassIsland.Core.Abstractions;
 using ClassIsland.Core.Attributes;
 using ClassIsland.Core.Controls;
+using ClassIsland.Core.Extensions.Registry;
 using ClassIsland.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -17,6 +18,7 @@ namespace OmniTTS.Plugin
         {
             services.AddSingleton<SettingsService>();
             services.AddSingleton<IOmniTTS, OmniTTService>();
+            services.AddSettingsPage<OmniTTSettingsPage>();
             AppBase.Current.AppStarted += async (_, _) =>
             {
                 await CommonTaskDialogs.ShowDialog("Hello world!", "Hello from OmniTTS.Plugin!");

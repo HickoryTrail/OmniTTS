@@ -1,0 +1,25 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:OmniTTS.Plugin.ViewModels"
+             x:Class="OmniTTS.Plugin.ProviderEditor"
+             x:DataType="vm:ProviderEditorViewModel">
+  <UserControl.DataContext>
+    <vm:ProviderEditorViewModel />
+  </UserControl.DataContext>
+  <Grid Margin="4" RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="110,*" RowSpacing="10" ColumnSpacing="8">
+    <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="启用提供方" />
+    <ToggleSwitch Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" IsChecked="{Binding IsEnabled}" />
+
+    <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="基础 URL" />
+    <TextBox Grid.Row="1" Grid.Column="1" MinWidth="320" Text="{Binding BaseUrl}" />
+
+    <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="API 密钥" />
+    <TextBox Grid.Row="2" Grid.Column="1" PasswordChar="*" Text="{Binding ApiKey}" />
+
+    <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Text="模型" />
+    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Model}" />
+
+    <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="音色 ID" />
+    <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding VoiceId}" />
+  </Grid>
+</UserControl>

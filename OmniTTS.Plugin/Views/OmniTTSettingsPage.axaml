@@ -1,0 +1,34 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:fa="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia"
+             xmlns:ci="clr-namespace:ClassIsland.Core.Controls;assembly=ClassIsland.Core"
+             x:Class="OmniTTS.Plugin.OmniTTSettingsPage">
+  <ScrollViewer>
+    <StackPanel Margin="16" Spacing="12">
+      <ci:IconText Glyph="&#xEF27;" Text="基本设置" />
+      <fa:FASettingsExpander Header="默认 TTS" Description="未指定提供方时使用的 TTS 提供方">
+        <fa:FASettingsExpander.Footer>
+          <ComboBox x:Name="DefaultProviderComboBox" Width="180" SelectionChanged="DefaultProviderComboBox_SelectionChanged">
+            <ComboBoxItem Tag="None">未选择</ComboBoxItem>
+            <ComboBoxItem Tag="OpenAI">OpenAI</ComboBoxItem>
+            <ComboBoxItem Tag="Gemini">Gemini</ComboBoxItem>
+            <ComboBoxItem Tag="FishAudio">Fish Audio</ComboBoxItem>
+            <ComboBoxItem Tag="Elevenlabs">ElevenLabs</ComboBoxItem>
+            <ComboBoxItem Tag="MiniMax">MiniMax</ComboBoxItem>
+            <ComboBoxItem Tag="MiMo">MiMo</ComboBoxItem>
+          </ComboBox>
+        </fa:FASettingsExpander.Footer>
+      </fa:FASettingsExpander>
+
+      <ci:IconText Glyph="&#xEF27;" Text="提供方设置" />
+      <fa:FASettingsExpander Header="TTS 提供方" Description="配置已启用的提供方">
+        <fa:FASettingsExpanderItem Content="OpenAI" Tag="OpenAI" IsClickEnabled="True" Click="Provider_Click" />
+        <fa:FASettingsExpanderItem Content="Gemini" Tag="Gemini" IsClickEnabled="True" Click="Provider_Click" />
+        <fa:FASettingsExpanderItem Content="Fish Audio" Tag="FishAudio" IsClickEnabled="True" Click="Provider_Click" />
+        <fa:FASettingsExpanderItem Content="ElevenLabs" Tag="Elevenlabs" IsClickEnabled="True" Click="Provider_Click" />
+        <fa:FASettingsExpanderItem Content="MiniMax" Tag="MiniMax" IsClickEnabled="True" Click="Provider_Click" />
+        <fa:FASettingsExpanderItem Content="MiMo" Tag="MiMo" IsClickEnabled="True" Click="Provider_Click" />
+      </fa:FASettingsExpander>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

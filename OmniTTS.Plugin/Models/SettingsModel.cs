@@ -35,78 +35,84 @@ namespace OmniTTS.Plugin.Models
         internal class ProviderSettings : ReactiveObject
         {
             // Setting 实例
-            internal OpenAISettings? _openAISetting;
+            internal OpenAISettings? _openAISetting = new();
             internal OpenAISettings? OpenAISetting
             {
                 get => _openAISetting;
                 set => this.RaiseAndSetIfChanged(ref _openAISetting, value);
             }
-            internal FishAudioSettings? _fishAudioSetting;
+            internal FishAudioSettings? _fishAudioSetting = new();
             internal FishAudioSettings? FishAudioSetting
             {
                 get => _fishAudioSetting;
                 set => this.RaiseAndSetIfChanged(ref _fishAudioSetting, value);
             }
-            internal ElevenLabsSettings? _elevenLabsSetting;
+            internal ElevenLabsSettings? _elevenLabsSetting = new();
             internal ElevenLabsSettings? ElevenLabsSetting
             {
                 get => _elevenLabsSetting;
                 set => this.RaiseAndSetIfChanged(ref _elevenLabsSetting, value);
             }
-            internal GeminiSettings? _geminiSetting;
+            internal GeminiSettings? _geminiSetting = new();
             internal GeminiSettings? GeminiSetting
             {
                 get => _geminiSetting;
                 set => this.RaiseAndSetIfChanged(ref _geminiSetting, value);
             }
-            internal MiniMaxSettings? _miniMaxSetting;
+            internal MiniMaxSettings? _miniMaxSetting = new();
             internal MiniMaxSettings? MiniMaxSetting
             {
                 get => _miniMaxSetting;
                 set => this.RaiseAndSetIfChanged(ref _miniMaxSetting, value);
             }
+            internal MiMoSettings? _miMoSetting = new();
+            internal MiMoSettings? MiMoSetting
+            {
+                get => _miMoSetting;
+                set => this.RaiseAndSetIfChanged(ref _miMoSetting, value);
+            }
 
             // 类定义
             internal class OpenAISettings : ReactiveObject
             {
-                internal required bool _isEnabled = false;
-                internal required bool IsEnabled
+                internal bool _isEnabled = false;
+                internal bool IsEnabled
                 {
                     get => _isEnabled;
                     set => this.RaiseAndSetIfChanged(ref _isEnabled, value);
                 }
-                internal required string _baseUrl = "https://api.openai.com";
-                internal required string BaseUrl
+                internal string _baseUrl = "https://api.openai.com";
+                internal string BaseUrl
                 {
                     get => _baseUrl;
                     set => this.RaiseAndSetIfChanged(ref _baseUrl, value);
                 }
-                internal required string _apiKey = "";
-                internal required string ApiKey
+                internal string _apiKey = "";
+                internal string ApiKey
                 {
                     get => _apiKey;
                     set => this.RaiseAndSetIfChanged(ref _apiKey, value);
                 }
-                internal required string _model = "gpt-4o-mini-tts";
-                internal required string Model
+                internal string _model = "gpt-4o-mini-tts";
+                internal string Model
                 {
                     get => _model;
                     set => this.RaiseAndSetIfChanged(ref _model, value);
                 }
-                internal required string _voice = "alloy";
-                internal required string Voice
+                internal string _voice = "alloy";
+                internal string Voice
                 {
                     get => _voice;
                     set => this.RaiseAndSetIfChanged(ref _voice, value);
                 }
-                internal required float _speed = 1.0f;
-                internal required float Speed
+                internal float _speed = 1.0f;
+                internal float Speed
                 {
                     get => _speed;
                     set => this.RaiseAndSetIfChanged(ref _speed, value);
                 }
-                internal required float _volume = 1.0f;
-                internal required float Volume
+                internal float _volume = 1.0f;
+                internal float Volume
                 {
                     get => _volume;
                     set => this.RaiseAndSetIfChanged(ref _volume, value);
@@ -114,44 +120,44 @@ namespace OmniTTS.Plugin.Models
             }
             internal class FishAudioSettings : ReactiveObject
             {
-                internal required bool _isEnabled = false;
-                internal required bool IsEnabled
+                internal bool _isEnabled = false;
+                internal bool IsEnabled
                 {
                     get => _isEnabled;
                     set => this.RaiseAndSetIfChanged(ref _isEnabled, value);
                 }
-                internal required string _baseUrl = "https://api.fish.audio";
-                internal required string BaseUrl
+                internal string _baseUrl = "https://api.fish.audio";
+                internal string BaseUrl
                 {
                     get => _baseUrl;
                     set => this.RaiseAndSetIfChanged(ref _baseUrl, value);
                 }
-                internal required string _apiKey = "";
-                internal required string ApiKey
+                internal string _apiKey = "";
+                internal string ApiKey
                 {
                     get => _apiKey;
                     set => this.RaiseAndSetIfChanged(ref _apiKey, value);
                 }
-                internal required string _model = "s2-pro";
-                internal required string Model
+                internal string _model = "s2-pro";
+                internal string Model
                 {
                     get => _model;
                     set => this.RaiseAndSetIfChanged(ref _model, value);
                 }
-                internal required string _voice = "8ef4a238714b45718ce04243307c57a7";
-                internal required string Voice
+                internal string _voice = "8ef4a238714b45718ce04243307c57a7";
+                internal string Voice
                 {
                     get => _voice;
                     set => this.RaiseAndSetIfChanged(ref _voice, value);
                 }
-                internal required float _speed = 1.0f;
-                internal required float Speed
+                internal float _speed = 1.0f;
+                internal float Speed
                 {
                     get => _speed;
                     set => this.RaiseAndSetIfChanged(ref _speed, value);
                 }
-                internal required float _volume = 1.0f;
-                internal required float Volume
+                internal float _volume = 1.0f;
+                internal float Volume
                 {
                     get => _volume;
                     set => this.RaiseAndSetIfChanged(ref _volume, value);
@@ -159,44 +165,44 @@ namespace OmniTTS.Plugin.Models
             }
             internal class ElevenLabsSettings : ReactiveObject
             {
-                internal required bool _isEnabled = false;
-                internal required bool IsEnabled
+                internal bool _isEnabled = false;
+                internal bool IsEnabled
                 {
                     get => _isEnabled;
                     set => this.RaiseAndSetIfChanged(ref _isEnabled, value);
                 }
-                internal required string _baseUrl = "https://api.elevenlabs.io";
-                internal required string BaseUrl
+                internal string _baseUrl = "https://api.elevenlabs.io";
+                internal string BaseUrl
                 {
                     get => _baseUrl;
                     set => this.RaiseAndSetIfChanged(ref _baseUrl, value);
                 }
-                internal required string _apiKey = "";
-                internal required string ApiKey
+                internal string _apiKey = "";
+                internal string ApiKey
                 {
                     get => _apiKey;
                     set => this.RaiseAndSetIfChanged(ref _apiKey, value);
                 }
-                internal required string _model = "eleven_multilingual_v2";
-                internal required string Model
+                internal string _model = "eleven_multilingual_v2";
+                internal string Model
                 {
                     get => _model;
                     set => this.RaiseAndSetIfChanged(ref _model, value);
                 }
-                internal required string _voice = "JBFqnCBsd6RMkjVDRZzb";
-                internal required string Voice
+                internal string _voice = "JBFqnCBsd6RMkjVDRZzb";
+                internal string Voice
                 {
                     get => _voice;
                     set => this.RaiseAndSetIfChanged(ref _voice, value);
                 }
-                internal required float _speed = 1.0f;
-                internal required float Speed
+                internal float _speed = 1.0f;
+                internal float Speed
                 {
                     get => _speed;
                     set => this.RaiseAndSetIfChanged(ref _speed, value);
                 }
-                internal required float _volume = 1.0f;
-                internal required float Volume
+                internal float _volume = 1.0f;
+                internal float Volume
                 {
                     get => _volume;
                     set => this.RaiseAndSetIfChanged(ref _volume, value);
@@ -204,44 +210,44 @@ namespace OmniTTS.Plugin.Models
             }
             internal class GeminiSettings : ReactiveObject
             {
-                internal required bool _isEnabled = false;
-                internal required bool IsEnabled
+                internal bool _isEnabled = false;
+                internal bool IsEnabled
                 {
                     get => _isEnabled;
                     set => this.RaiseAndSetIfChanged(ref _isEnabled, value);
                 }
-                internal required string _baseUrl = "https://generativelanguage.googleapis.com";
-                internal required string BaseUrl
+                internal string _baseUrl = "https://generativelanguage.googleapis.com";
+                internal string BaseUrl
                 {
                     get => _baseUrl;
                     set => this.RaiseAndSetIfChanged(ref _baseUrl, value);
                 }
-                internal required string _apiKey = "";
-                internal required string ApiKey
+                internal string _apiKey = "";
+                internal string ApiKey
                 {
                     get => _apiKey;
                     set => this.RaiseAndSetIfChanged(ref _apiKey, value);
                 }
-                internal required string _model = "gemini-3.1-flash-tts-preview";
-                internal required string Model
+                internal string _model = "gemini-3.1-flash-tts-preview";
+                internal string Model
                 {
                     get => _model;
                     set => this.RaiseAndSetIfChanged(ref _model, value);
                 }
-                internal required string _voice = "Kore";
-                internal required string Voice
+                internal string _voice = "Kore";
+                internal string Voice
                 {
                     get => _voice;
                     set => this.RaiseAndSetIfChanged(ref _voice, value);
                 }
-                internal required float _speed = 1.0f;
-                internal required float Speed
+                internal float _speed = 1.0f;
+                internal float Speed
                 {
                     get => _speed;
                     set => this.RaiseAndSetIfChanged(ref _speed, value);
                 }
-                internal required float _volume = 1.0f;
-                internal required float Volume
+                internal float _volume = 1.0f;
+                internal float Volume
                 {
                     get => _volume;
                     set => this.RaiseAndSetIfChanged(ref _volume, value);
@@ -249,44 +255,89 @@ namespace OmniTTS.Plugin.Models
             }
             internal class MiniMaxSettings : ReactiveObject
             {
-                internal required bool _isEnabled = false;
-                internal required bool IsEnabled
+                internal bool _isEnabled = false;
+                internal bool IsEnabled
                 {
                     get => _isEnabled;
                     set => this.RaiseAndSetIfChanged(ref _isEnabled, value);
                 }
-                internal required string _baseUrl = "https://api.minimax.io";
-                internal required string BaseUrl
+                internal string _baseUrl = "https://api.minimax.io";
+                internal string BaseUrl
                 {
                     get => _baseUrl;
                     set => this.RaiseAndSetIfChanged(ref _baseUrl, value);
                 }
-                internal required string _apiKey = "";
-                internal required string ApiKey
+                internal string _apiKey = "";
+                internal string ApiKey
                 {
                     get => _apiKey;
                     set => this.RaiseAndSetIfChanged(ref _apiKey, value);
                 }
-                internal required string _model = "speech-2.8-hd";
-                internal required string Model
+                internal string _model = "speech-2.8-hd";
+                internal string Model
                 {
                     get => _model;
                     set => this.RaiseAndSetIfChanged(ref _model, value);
                 }
-                internal required string _voice = "English_expressive_narrator";
-                internal required string Voice
+                internal string _voice = "English_expressive_narrator";
+                internal string Voice
                 {
                     get => _voice;
                     set => this.RaiseAndSetIfChanged(ref _voice, value);
                 }
-                internal required float _speed = 1.0f;
-                internal required float Speed
+                internal float _speed = 1.0f;
+                internal float Speed
                 {
                     get => _speed;
                     set => this.RaiseAndSetIfChanged(ref _speed, value);
                 }
-                internal required float _volume = 1.0f;
-                internal required float Volume
+                internal float _volume = 1.0f;
+                internal float Volume
+                {
+                    get => _volume;
+                    set => this.RaiseAndSetIfChanged(ref _volume, value);
+                }
+            }
+            internal class MiMoSettings : ReactiveObject
+            {
+                internal bool _isEnabled = false;
+                internal bool IsEnabled
+                {
+                    get => _isEnabled;
+                    set => this.RaiseAndSetIfChanged(ref _isEnabled, value);
+                }
+                internal string _baseUrl = "https://api.xiaomimimo.com";
+                internal string BaseUrl
+                {
+                    get => _baseUrl;
+                    set => this.RaiseAndSetIfChanged(ref _baseUrl, value);
+                }
+                internal string _apiKey = "";
+                internal string ApiKey
+                {
+                    get => _apiKey;
+                    set => this.RaiseAndSetIfChanged(ref _apiKey, value);
+                }
+                internal string _model = "mimo-v2.5-tts";
+                internal string Model
+                {
+                    get => _model;
+                    set => this.RaiseAndSetIfChanged(ref _model, value);
+                }
+                internal string _voice = "mimo_default";
+                internal string Voice
+                {
+                    get => _voice;
+                    set => this.RaiseAndSetIfChanged(ref _voice, value);
+                }
+                internal float _speed = 1.0f;
+                internal float Speed
+                {
+                    get => _speed;
+                    set => this.RaiseAndSetIfChanged(ref _speed, value);
+                }
+                internal float _volume = 1.0f;
+                internal float Volume
                 {
                     get => _volume;
                     set => this.RaiseAndSetIfChanged(ref _volume, value);

@@ -16,15 +16,16 @@ namespace OmniTTS.Plugin.Services
         public string? PluginConfigFolder { get; set; }
 
         // 构造函数
-        internal SettingsService(ILogger<SettingsService> logger)
+        public SettingsService(ILogger<SettingsService> logger)
         {
             Logger = logger;
         }
 
         internal async Task<SettingsService> InitializeAsync(string pluginConfigFolder)
         {
-            if (string.IsNullOrWhiteSpace(pluginConfigFolder) || !Directory.Exists(pluginConfigFolder))
+            if (!string.IsNullOrWhiteSpace(pluginConfigFolder))
             {
+                Directory.CreateDirectory(pluginConfigFolder);
                 PluginConfigFolder = pluginConfigFolder;
             }
             else
@@ -81,6 +82,7 @@ namespace OmniTTS.Plugin.Services
                 ObserveRecursive(ps.ElevenLabsSetting);
                 ObserveRecursive(ps.GeminiSetting);
                 ObserveRecursive(ps.MiniMaxSetting);
+                ObserveRecursive(ps.MiMoSetting);
             }
             // 叶子级设置类（OpenAISettings 等）无嵌套 ReactiveObject，递归自动终止
         }
@@ -115,6 +117,8 @@ namespace OmniTTS.Plugin.Services
                         ObserveRecursive(ps.GeminiSetting); break;
                     case nameof(SettingsModel.ProviderSettings.MiniMaxSetting):
                         ObserveRecursive(ps.MiniMaxSetting); break;
+                    case nameof(SettingsModel.ProviderSettings.MiMoSetting):
+                        ObserveRecursive(ps.MiMoSetting); break;
                 }
             }
             // SettingsModel 中 ProviderSetting 实例被替换
