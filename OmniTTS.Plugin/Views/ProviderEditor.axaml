@@ -1,25 +1,37 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:OmniTTS.Plugin.ViewModels"
-             x:Class="OmniTTS.Plugin.ProviderEditor"
-             x:DataType="vm:ProviderEditorViewModel">
-  <UserControl.DataContext>
-    <vm:ProviderEditorViewModel />
-  </UserControl.DataContext>
-  <Grid Margin="4" RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="110,*" RowSpacing="10" ColumnSpacing="8">
-    <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="启用提供方" />
-    <ToggleSwitch Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" IsChecked="{Binding IsEnabled}" />
-
-    <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="基础 URL" />
-    <TextBox Grid.Row="1" Grid.Column="1" MinWidth="320" Text="{Binding BaseUrl}" />
-
-    <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="API 密钥" />
-    <TextBox Grid.Row="2" Grid.Column="1" PasswordChar="*" Text="{Binding ApiKey}" />
-
-    <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Text="模型" />
-    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Model}" />
-
-    <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="音色 ID" />
-    <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding VoiceId}" />
-  </Grid>
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:fa="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia"
+             xmlns:ci="clr-namespace:ClassIsland.Core.Controls;assembly=ClassIsland.Core"
+              xmlns:ci2="clr-namespace:ClassIsland.Core.Abstractions.Controls;assembly=ClassIsland.Core"
+              xmlns:vm="using:OmniTTS.Plugin.ViewModels"
+              x:Class="OmniTTS.Plugin.ProviderEditor"
+              x:DataType="vm:ProviderEditorViewModel">
+    <UserControl.DataContext>
+		<vm:ProviderEditorViewModel />
+    </UserControl.DataContext>
+    <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Margin="10,8,10,8">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,6">
+		    <ci:IconText Glyph="&#xEAB0;" Text="启用提供方: " Width="100"/>
+            <ToggleSwitch IsChecked="{Binding IsEnabled}"/>
+        </StackPanel>
+		<StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,6">
+		    <ci:IconText Glyph="&#xEAB0;" Text="基础 URL: " Width="100"/>
+            <TextBox Width="300" VerticalAlignment="Center" Text="{Binding BaseUrl}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,6">
+		    <ci:IconText Glyph="&#xEA01;" Text="API 密钥: " Width="100"/>
+            <TextBox RevealPassword="True" PasswordChar="*" Width="300" VerticalAlignment="Center" Classes.revealPasswordButton="True" Text="{Binding ApiKey}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,6">
+		    <ci:IconText Glyph="&#xE27E;" Text="语音模型: " Width="100"/>
+            <TextBox Width="300" VerticalAlignment="Center" Text="{Binding Model}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,6">
+		    <ci:IconText Glyph="&#xECC5;" Text="音色 ID: " Width="100"/>
+            <TextBox Width="300" VerticalAlignment="Center" Text="{Binding VoiceId}"/>
+        </StackPanel>
+    </StackPanel>
 </UserControl>

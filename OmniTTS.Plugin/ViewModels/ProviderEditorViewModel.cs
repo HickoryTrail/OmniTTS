@@ -1,4 +1,5 @@
 using ClassIsland.Shared;
+using Microsoft.Extensions.Logging;
 using OmniTTS.Plugin.Services;
 using OmniTTS.Shared;
 using ReactiveUI;
@@ -9,39 +10,45 @@ internal class ProviderEditorViewModel : ReactiveObject
 {
     internal Provider Provider { get; set; } = Provider.None;
 
+    private bool _isEnabled = false;
     public bool IsEnabled
     {
         get => _isEnabled;
         set => this.RaiseAndSetIfChanged(ref _isEnabled, value);
     }
 
+    private string _baseUrl = string.Empty;
     public string BaseUrl
     {
         get => _baseUrl;
         set => this.RaiseAndSetIfChanged(ref _baseUrl, value);
     }
 
+    private string _apiKey = string.Empty;
     public string ApiKey
     {
         get => _apiKey;
         set => this.RaiseAndSetIfChanged(ref _apiKey, value);
     }
 
+    private string _model = string.Empty;
     public string Model
     {
         get => _model;
         set => this.RaiseAndSetIfChanged(ref _model, value);
     }
 
+    private string _voiceId = string.Empty;
     public string VoiceId
     {
         get => _voiceId;
         set => this.RaiseAndSetIfChanged(ref _voiceId, value);
     }
 
-    internal void Load()
+    internal void LoadContext()
     {
-        var settings = GetSettings();
+        var settings = IAppHost.GetService<SettingsService>();
+        var Logger = IAppHost.GetService<ILogger<ProviderEditorViewModel>>();
         switch (Provider)
         {
             case Provider.OpenAI:
@@ -87,13 +94,15 @@ internal class ProviderEditorViewModel : ReactiveObject
                 VoiceId = settings.Setting.ProviderSetting.MiMoSetting.Voice;
                 break;
             default:
+                Logger.LogError("Invalid provider: {Provider}", Provider);
                 throw new ArgumentOutOfRangeException(nameof(Provider), Provider, "A TTS provider is required.");
         }
     }
 
-    internal void Save()
+    internal void SaveContext()
     {
-        var settings = GetSettings();
+        var settings = IAppHost.GetService<SettingsService>();
+        var Logger = IAppHost.GetService<ILogger<ProviderEditorViewModel>>();
         switch (Provider)
         {
             case Provider.OpenAI:
@@ -139,17 +148,22 @@ internal class ProviderEditorViewModel : ReactiveObject
                 settings.Setting.ProviderSetting.MiMoSetting.Voice = VoiceId;
                 break;
             default:
+                Logger.LogError("Invalid provider: {Provider}", Provider);
                 throw new ArgumentOutOfRangeException(nameof(Provider), Provider, "A TTS provider is required.");
         }
     }
 
-    private bool _isEnabled;
-    private string _baseUrl = string.Empty;
-    private string _apiKey = string.Empty;
-    private string _model = string.Empty;
-    private string _voiceId = string.Empty;
-
-    private static SettingsService GetSettings() => IAppHost.GetService<SettingsService>()
-        ?? throw new InvalidOperationException("SettingsService is unavailable.");
+    internal bool IsValid()
+    {
+        if (string.IsNullOrWhiteSpace(BaseUrl))
+            return false;
+        if (string.IsNullOrWhiteSpace(ApiKey))
+            return false;
+        if (string.IsNullOrWhiteSpace(Model))
+            return false;
+        if (string.IsNullOrWhiteSpace(VoiceId))
+            return false;
+        return true;
+    }
 
 }

@@ -72,7 +72,7 @@ public partial class OmniTTSettingsPage : SettingsPageBase
 
         if (object.Equals(await dialog.ShowAsync(true), FATaskDialogStandardResult.OK))
         {
-            ((ProviderEditorViewModel)editor.DataContext!).Save();
+            ((ProviderEditorViewModel)editor.DataContext!).SaveContext();
         }
     }
 }

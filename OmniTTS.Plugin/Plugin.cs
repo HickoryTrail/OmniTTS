@@ -1,7 +1,7 @@
 using ClassIsland.Core;
 using ClassIsland.Core.Abstractions;
+using ClassIsland.Core.Abstractions.Services.SpeechService;
 using ClassIsland.Core.Attributes;
-using ClassIsland.Core.Controls;
 using ClassIsland.Core.Extensions.Registry;
 using ClassIsland.Shared;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,13 +17,19 @@ namespace OmniTTS.Plugin
         public override void Initialize(HostBuilderContext context, IServiceCollection services)
         {
             services.AddSingleton<SettingsService>();
+            services.AddSingleton<GenerationService>();
+            services.AddSingleton<AudioService>();
             services.AddSingleton<IOmniTTS, OmniTTService>();
+            services.AddSingleton<ISpeechService, OmniSpeechService>();
             services.AddSettingsPage<OmniTTSettingsPage>();
             AppBase.Current.AppStarted += async (_, _) =>
             {
-                await CommonTaskDialogs.ShowDialog("Hello world!", "Hello from OmniTTS.Plugin!");
                 var settingsService = IAppHost.GetService<SettingsService>();
                 await settingsService.InitializeAsync(PluginConfigFolder);
+                var OmniTTService = IAppHost.GetService<IOmniTTS>() as OmniTTService;
+                OmniTTService?.Initialize();
+                var speechService = IAppHost.GetService<ISpeechService>() as OmniSpeechService;
+                speechService?.Initialize();
             };
         }
     }

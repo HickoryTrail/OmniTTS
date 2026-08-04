@@ -25,7 +25,19 @@ namespace OmniTTS.Plugin.Services
         {
             if (!string.IsNullOrWhiteSpace(pluginConfigFolder))
             {
-                Directory.CreateDirectory(pluginConfigFolder);
+                try
+                {
+                    Path.GetFullPath(pluginConfigFolder); // 验证路径合法性
+                }
+                catch
+                {
+                    Logger?.LogError("Invalid plugin config folder path: {PluginConfigFolder}", pluginConfigFolder);
+                    throw new ArgumentException("Invalid plugin config folder path", nameof(pluginConfigFolder));
+                }
+                if (!Directory.Exists(pluginConfigFolder))
+                {
+                    Directory.CreateDirectory(pluginConfigFolder);
+                }
                 PluginConfigFolder = pluginConfigFolder;
             }
             else

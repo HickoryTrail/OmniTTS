@@ -6,7 +6,7 @@
   <ScrollViewer>
     <StackPanel Margin="16" Spacing="12">
       <ci:IconText Glyph="&#xEF27;" Text="基本设置" />
-      <fa:FASettingsExpander Header="默认 TTS" Description="未指定提供方时使用的 TTS 提供方">
+      <fa:FASettingsExpander IconSource="{ci:FluentIconSource &#xED53;}" Header="默认 TTS" Description="未指定提供方时使用的 TTS 提供方">
         <fa:FASettingsExpander.Footer>
           <ComboBox x:Name="DefaultProviderComboBox" Width="180" SelectionChanged="DefaultProviderComboBox_SelectionChanged">
             <ComboBoxItem Tag="None">未选择</ComboBoxItem>
@@ -18,10 +18,23 @@
             <ComboBoxItem Tag="MiMo">MiMo</ComboBoxItem>
           </ComboBox>
         </fa:FASettingsExpander.Footer>
+
+      </fa:FASettingsExpander>
+        <fa:FASettingsExpander IconSource="{ci:FluentIconSource &#xED53;}" Header="最大并发量" Description="同时请求API的最大次数">
+        <fa:FASettingsExpander.Footer>
+          <StackPanel Orientation="Horizontal">
+			  <TextBlock Text="5" VerticalAlignment="Center" Margin="12,0" FontSize="15"/>
+              <Slider Minimum="1" Maximum="20"
+                      TickFrequency="1"
+                      IsSnapToTickEnabled="True"
+                      VerticalAlignment="Center"
+                      Width="180"/>
+          </StackPanel>
+        </fa:FASettingsExpander.Footer>
       </fa:FASettingsExpander>
 
       <ci:IconText Glyph="&#xEF27;" Text="提供方设置" />
-      <fa:FASettingsExpander Header="TTS 提供方" Description="配置已启用的提供方">
+      <fa:FASettingsExpander IconSource="{ci:FluentIconSource &#xE28A;}" Header="TTS 提供方" Description="配置已启用的提供方">
         <fa:FASettingsExpanderItem Content="OpenAI" Tag="OpenAI" IsClickEnabled="True" Click="Provider_Click" />
         <fa:FASettingsExpanderItem Content="Gemini" Tag="Gemini" IsClickEnabled="True" Click="Provider_Click" />
         <fa:FASettingsExpanderItem Content="Fish Audio" Tag="FishAudio" IsClickEnabled="True" Click="Provider_Click" />

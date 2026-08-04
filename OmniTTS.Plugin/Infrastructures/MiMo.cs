@@ -7,6 +7,9 @@ namespace OmniTTS.Plugin.Infrastructures
 {
     internal class MiMo
     {
+        /// <summary>
+        /// Represents an audio option for MiMo
+        /// </summary>
         internal class MiMoOption
         {
             internal required string Text { get; set; }
@@ -25,6 +28,11 @@ namespace OmniTTS.Plugin.Infrastructures
             {
                 _baseUrl = ProviderUrlHelper.NormalizeMiMoBaseUrl(baseUrl);
                 _apiKey = apiKey;
+            }
+            internal MiMoClient()
+            {
+                _baseUrl = ProviderUrlHelper.NormalizeOpenAIBaseUrl("");
+                _apiKey = "";
             }
 
             internal async Task GenerateAudioAsync(MiMoOption option, CancellationToken? cts)

@@ -1,40 +1,42 @@
+using ClassIsland.Shared;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using OmniTTS.Plugin.Infrastructures;
 using OmniTTS.Plugin.Models;
 using OmniTTS.Shared;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Channels;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace OmniTTS.Plugin.Services
 {
     internal class OmniTTService : IOmniTTS
     {
-        private ILogger<OmniTTService>? Logger { get; set; }
+        private ILogger<OmniTTService> Logger { get; set; }
         private SettingsService SettingsService { get; set; }
+        private GenerationService GenerationService { get; set; }
+        private AudioService AudioService { get; set; }
         private Channel<RequestOption> GenerateChannel { get; set; } = Channel.CreateUnbounded<RequestOption>();
         private Channel<PlayOption> AudioPlayChannel { get; set; } = Channel.CreateUnbounded<PlayOption>();
 
-        internal OmniTTService(ILogger<OmniTTService> logger, SettingsService settingsService,GenerationService generationService)
+        public OmniTTService(ILogger<OmniTTService> logger)
         {
-            Logger = logger ?? null;
-            SettingsService = settingsService;
-            if (SettingsService == null)
-            {
-                Logger?.LogCritical("SettingsService is null. OmniTTService cannot be initialized.");
-                throw new InvalidOperationException("SettingsService is null. OmniTTService cannot be initialized.");
-            }
-            generationService.StartWorker(SettingsService.Setting.MaxConcurrentRequests, GenerateChannel);
+            Logger = logger;
+            Logger.LogInformation("OmniTTService created.");
+        }
+
+        internal void Initialize()
+        {
+            SettingsService = IAppHost.GetService<SettingsService>() ?? throw new InvalidOperationException("SettingsService is null. OmniTTService cannot be initialized.");
+            GenerationService = IAppHost.GetService<GenerationService>() ?? throw new InvalidOperationException("GenerationService is null. OmniTTService cannot be initialized.");
+            AudioService = IAppHost.GetService<AudioService>() ?? throw new InvalidOperationException("AudioService is null. OmniTTService cannot be initialized.");
+            GenerationService.Initialize(SettingsService);
+            GenerationService.StartWorker(SettingsService.Setting.MaxConcurrentRequests, GenerateChannel);
+            AudioService.Start(AudioPlayChannel);
+            Logger.LogInformation("OmniTTService initialized.");
         }
 
 
+
         // Play Audio
-        public async Task PlayAudioAsync(TtsOption option,CancellationToken cts)
+        public async Task PlayAudioAsync(TtsOption option, CancellationToken cts)
         {
             if (CheckOption(option.Text, cts)) return;
             string filename = await GenerateCacheAsync(option, cts);
@@ -52,24 +54,24 @@ namespace OmniTTS.Plugin.Services
         public async Task PlayAudioAsync(string text, CancellationToken cts)
         {
             if (CheckOption(text, cts)) return;
-            
+
             var option = new TtsOption
             {
                 Text = text
             };
             FormatTtsOption(option);
             await PlayAudioAsync(option, cts);
-            
+
         }
         public void PlayAudio(TtsOption option, CancellationToken cts)
         {
             if (CheckOption(option.Text, cts)) return;
-            PlayAudioAsync(option, cts);
+            _ = SafeRunAsync(option, cts, PlayAudioAsync);
         }
         public void PlayAudio(string text, CancellationToken cts)
         {
             if (CheckOption(text, cts)) return;
-            PlayAudioAsync(text, cts);
+            _ = SafeRunAsync(text, cts, PlayAudioAsync);
         }
         public void CancelAllAudio()
         {
@@ -126,12 +128,12 @@ namespace OmniTTS.Plugin.Services
         public void GenerateCache(TtsOption option, CancellationToken cts)
         {
             if (CheckOption(option.Text, cts)) return;
-            GenerateCacheAsync(option, cts);
+            _ = SafeRunAsync(option, cts, GenerateCacheAsync);
         }
         public void GenerateCache(string text, CancellationToken cts)
         {
             if (CheckOption(text, cts)) return;
-            GenerateCacheAsync(text, cts);
+            _ = SafeRunAsync(text, cts, GenerateCacheAsync);
         }
 
         // 批量缓存
@@ -177,7 +179,7 @@ namespace OmniTTS.Plugin.Services
             List<TtsOption> options = new();
             foreach (var text in texts)
             {
-                if(CheckOption(text, cts)) continue;
+                if (CheckOption(text, cts)) continue;
                 var option = new TtsOption
                 {
                     Text = text
@@ -189,11 +191,11 @@ namespace OmniTTS.Plugin.Services
         }
         public void GenerateCache(List<TtsOption> options, CancellationToken cts)
         {
-            GenerateCacheAsync(options, cts);
+            _ = SafeRunAsync(options, cts, GenerateCacheAsync);
         }
         public void GenerateCache(List<string> texts, CancellationToken cts)
         {
-            GenerateCacheAsync(texts, cts);
+            _ = SafeRunAsync(texts, cts, GenerateCacheAsync);
         }
 
         // 工具方法
@@ -293,6 +295,29 @@ namespace OmniTTS.Plugin.Services
             option.Volume ??= volume;
             option.Speed ??= speed;
             return;
+        }
+
+        private async Task SafeRunAsync<T>(T value, CancellationToken cts, Func<T, CancellationToken, Task<T>> func)
+        {
+            try
+            {
+                await func(value, cts);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "An error occurred while processing the request.");
+            }
+        }
+        private async Task SafeRunAsync<T>(T value, CancellationToken cts, Func<T, CancellationToken, Task> func)
+        {
+            try
+            {
+                await func(value, cts);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "An error occurred while processing the request.");
+            }
         }
     }
 }

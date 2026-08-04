@@ -1,12 +1,7 @@
 using Microsoft.Extensions.Logging;
 using OmniTTS.Plugin.Models;
 using OmniTTS.Shared;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Channels;
-using System.Threading.Tasks;
 
 namespace OmniTTS.Plugin.Services
 {
@@ -21,23 +16,25 @@ namespace OmniTTS.Plugin.Services
         private Infrastructures.MiniMax.MiniMaxClient? MiniMaxClient { get; set; }
         private Infrastructures.MiMo.MiMoClient? MiMoClient { get; set; }
 
-        internal GenerationService(ILogger<OmniTTService> logger, SettingsService settingsService)
+        public GenerationService(ILogger<OmniTTService> logger)
         {
             Logger = logger ?? null;
+        }
+
+        internal void Initialize(SettingsService settingsService)
+        {
             SettingsService = settingsService;
             if (SettingsService == null)
             {
                 Logger?.LogCritical("SettingsService is null. OmniTTService cannot be initialized.");
-                throw new InvalidOperationException("SettingsService is null. OmniTTService cannot be initialized.");
+                throw new InvalidOperationException("SettingsService is null. GenerationService cannot be initialized.");
             }
             if (settingsService.Setting.ProviderSetting.OpenAISetting.IsEnabled) OpenAIClient = new Infrastructures.OpenAI.OpenAIClient();
             if (settingsService.Setting.ProviderSetting.GeminiSetting.IsEnabled) GeminiClient = new Infrastructures.Gemini.GeminiClient();
             if (settingsService.Setting.ProviderSetting.FishAudioSetting.IsEnabled) FishAudioClient = new Infrastructures.FishAudio.FishAudioClient();
             if (settingsService.Setting.ProviderSetting.ElevenLabsSetting.IsEnabled) ElevenLabsClient = new Infrastructures.ElevenLabs.ElevenLabsClient();
             if (settingsService.Setting.ProviderSetting.MiniMaxSetting.IsEnabled) MiniMaxClient = new Infrastructures.MiniMax.MiniMaxClient();
-            if (settingsService.Setting.ProviderSetting.MiMoSetting.IsEnabled) MiMoClient = new Infrastructures.MiMo.MiMoClient(
-                settingsService.Setting.ProviderSetting.MiMoSetting.BaseUrl,
-                settingsService.Setting.ProviderSetting.MiMoSetting.ApiKey);
+            Logger?.LogInformation("Initialized GenerationService.");
         }
 
         internal void StartWorker(int num, Channel<RequestOption> channel)

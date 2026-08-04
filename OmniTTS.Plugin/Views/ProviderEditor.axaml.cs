@@ -12,6 +12,6 @@ public partial class ProviderEditor : UserControl
         var viewModel = DataContext as ProviderEditorViewModel
             ?? throw new InvalidOperationException("Unable to create the provider editor view model.");
         viewModel.Provider = provider;
-        viewModel.Load();
+        viewModel.LoadContext();
     }
 }
