@@ -2,6 +2,7 @@
 
 # <image src="assests/Logo.png" Height="28" Width="28"/> OmniTTS <br>
 <image src="assests/Banner-Dark.png"/>
+
 [![正式版 Release](https://img.shields.io/github/v/release/HickoryTrail/OmniTTS?style=flat-square&color=%233fb950&label=正式版)](https://github.com/HickoryTrail/OmniTTS/releases/latest)
 [![下载量](https://img.shields.io/github/downloads/HickoryTrail/OmniTTS/total?style=social&label=下载量&logo=github)](https://github.com/HickoryTrail/OmniTTS/releases/latest)
 [![GitHub Repo Languages](https://img.shields.io/github/languages/top/HickoryTrail/OmniTTS?style=flat-square)](https://github.com/HickoryTrail/OmniTTS/search?l=c%23)
