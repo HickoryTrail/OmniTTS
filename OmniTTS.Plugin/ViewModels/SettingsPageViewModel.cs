@@ -30,6 +30,16 @@ namespace OmniTTS.Plugin.ViewModels
             };
             SelectedProviderPair = Providers.FirstOrDefault(x => x.Key == SettingsService.Setting.DefaultProvider);
             MaxConcurrentRequests = SettingsService.Setting.MaxConcurrentRequests;
+            SettingsService.Setting.ProviderSetting.WhenAnyValue(
+                x => x.OpenAISetting.IsEnabled,
+                x => x.GeminiSetting.IsEnabled,
+                x => x.FishAudioSetting.IsEnabled,
+                x => x.ElevenLabsSetting.IsEnabled,
+                x => x.MiMoSetting.IsEnabled,
+                x => x.MiniMaxSetting.IsEnabled).Subscribe(_ =>
+                {
+                    CheckCurrentProvider();
+                });
         }
         private ObservableCollection<KeyValuePair<Provider, string>> _providers = new();
         public ObservableCollection<KeyValuePair<Provider,string>> Providers
@@ -65,6 +75,51 @@ namespace OmniTTS.Plugin.ViewModels
             {
                 this.RaiseAndSetIfChanged(ref _maxConcurrentRequests, value);
                 SettingsService.Setting.MaxConcurrentRequests = value;
+            }
+        }
+
+        private void CheckCurrentProvider()
+        {
+            switch (SelectedProvider)
+            {
+                case Provider.OpenAI:
+                    if (!SettingsService.Setting.ProviderSetting.OpenAISetting.IsEnabled)
+                    {
+                        SelectedProviderPair = Providers.FirstOrDefault(x => x.Key == Provider.None);
+                    }
+                    break;
+                case Provider.Gemini:
+                    if (!SettingsService.Setting.ProviderSetting.GeminiSetting.IsEnabled)
+                    {
+                        SelectedProviderPair = Providers.FirstOrDefault(x => x.Key == Provider.None);
+                    }
+                    break;
+                case Provider.FishAudio:
+                    if (!SettingsService.Setting.ProviderSetting.FishAudioSetting.IsEnabled)
+                    {
+                        SelectedProviderPair = Providers.FirstOrDefault(x => x.Key == Provider.None);
+                    }
+                    break;
+                case Provider.Elevenlabs:
+                    if (!SettingsService.Setting.ProviderSetting.ElevenLabsSetting.IsEnabled)
+                    {
+                        SelectedProviderPair = Providers.FirstOrDefault(x => x.Key == Provider.None);
+                    }
+                    break;
+                case Provider.MiniMax:
+                    if (!SettingsService.Setting.ProviderSetting.MiniMaxSetting.IsEnabled)
+                    {
+                        SelectedProviderPair = Providers.FirstOrDefault(x => x.Key == Provider.None);
+                    }
+                    break;
+                case Provider.MiMo:
+                    if (!SettingsService.Setting.ProviderSetting.MiMoSetting.IsEnabled)
+                    {
+                        SelectedProviderPair = Providers.FirstOrDefault(x => x.Key == Provider.None);
+                    }
+                    break;
+                default:
+                    break;
             }
         }
     }

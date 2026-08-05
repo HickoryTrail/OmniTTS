@@ -1,10 +1,12 @@
 using ClassIsland.Core.Abstractions.Services.SpeechService;
+using ClassIsland.Core.Attributes;
 using ClassIsland.Shared;
 using Microsoft.Extensions.Logging;
 using OmniTTS.Shared;
 
 namespace OmniTTS.Plugin.Services
 {
+    [SpeechProviderInfo("classisland.speech.omniTts", "OmniTTS")]
     public class OmniSpeechService : ISpeechService
     {
         private ILogger<OmniSpeechService> Logger { get; set; }

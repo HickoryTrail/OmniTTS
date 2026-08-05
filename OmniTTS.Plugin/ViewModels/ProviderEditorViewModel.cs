@@ -8,6 +8,19 @@ namespace OmniTTS.Plugin.ViewModels;
 
 internal class ProviderEditorViewModel : ReactiveObject
 {
+    public ProviderEditorViewModel()
+    {
+        this.WhenAnyValue(
+            x => x.BaseUrl,
+            x => x.ApiKey,
+            x => x.Model,
+            x => x.VoiceId
+        ).Subscribe(_ =>
+        {
+            IsConfigValid = IsValid();
+            if (!IsConfigValid) IsEnabled = false;
+        });
+    }
     internal Provider Provider { get; set; } = Provider.None;
 
     private bool _isEnabled = false;
@@ -43,6 +56,12 @@ internal class ProviderEditorViewModel : ReactiveObject
     {
         get => _voiceId;
         set => this.RaiseAndSetIfChanged(ref _voiceId, value);
+    }
+    private bool _isConfigValid = true;
+    public bool IsConfigValid
+    {
+        get => _isConfigValid;
+        set => this.RaiseAndSetIfChanged(ref _isConfigValid, value);
     }
 
     internal void LoadContext()

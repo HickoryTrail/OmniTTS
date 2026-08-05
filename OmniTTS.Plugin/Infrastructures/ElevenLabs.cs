@@ -1,6 +1,9 @@
 using System.Net;
 using RestSharp;
 using OmniTTS.Plugin.Helper;
+using OmniTTS.Plugin.Services;
+using ClassIsland.Shared;
+using ReactiveUI;
 
 namespace OmniTTS.Plugin.Infrastructures
 {
@@ -20,17 +23,25 @@ namespace OmniTTS.Plugin.Infrastructures
 
         internal class ElevenLabsClient
         {
-            private readonly string _apiKey;
-            private readonly string _baseUrl;
+            private string _apiKey;
+            private string _baseUrl;
+            private SettingsService SettingsService { get; set; }
             internal ElevenLabsClient(string base_url, string apiKey)
             {
+                SettingsService = IAppHost.GetService<SettingsService>();
                 _baseUrl = ProviderUrlHelper.NormalizeElevenLabsBaseUrl(base_url);
                 _apiKey = apiKey;
             }
             internal ElevenLabsClient()
             {
-                _baseUrl = ProviderUrlHelper.NormalizeElevenLabsBaseUrl("");
-                _apiKey = "";
+                SettingsService = IAppHost.GetService<SettingsService>();
+                _baseUrl = ProviderUrlHelper.NormalizeElevenLabsBaseUrl(SettingsService.Setting.ProviderSetting.ElevenLabsSetting.BaseUrl);
+                _apiKey = SettingsService.Setting.ProviderSetting.ElevenLabsSetting.ApiKey;
+                SettingsService.Setting.ProviderSetting.ElevenLabsSetting.WhenAnyValue(x => x.BaseUrl, x => x.ApiKey).Subscribe(_ =>
+                {
+                    _baseUrl = ProviderUrlHelper.NormalizeElevenLabsBaseUrl(SettingsService.Setting.ProviderSetting.ElevenLabsSetting.BaseUrl);
+                    _apiKey = SettingsService.Setting.ProviderSetting.ElevenLabsSetting.ApiKey;
+                });
             }
             internal async Task GenerateAudioAsync(ElevenLabsOption option, CancellationToken? cts)
             {

@@ -2,6 +2,9 @@ using System.Net;
 using System.Text.Json;
 using RestSharp;
 using OmniTTS.Plugin.Helper;
+using OmniTTS.Plugin.Services;
+using ClassIsland.Shared;
+using ReactiveUI;
 
 namespace OmniTTS.Plugin.Infrastructures
 {
@@ -21,17 +24,27 @@ namespace OmniTTS.Plugin.Infrastructures
 
         internal class MiniMaxClient
         {
-            private readonly string _apiKey;
-            private readonly string _baseUrl;
+            private string _apiKey;
+            private string _baseUrl;
+            private SettingsService SettingsService { get; set; }
             internal MiniMaxClient(string base_url, string apiKey)
             {
+                SettingsService = IAppHost.GetService<SettingsService>();
                 _baseUrl = ProviderUrlHelper.NormalizeMiniMaxBaseUrl(base_url);
                 _apiKey = apiKey;
             }
             internal MiniMaxClient()
             {
-                _baseUrl = ProviderUrlHelper.NormalizeMiniMaxBaseUrl("");
-                _apiKey = "";
+                SettingsService = IAppHost.GetService<SettingsService>();
+                _baseUrl = ProviderUrlHelper.NormalizeMiniMaxBaseUrl(SettingsService.Setting.ProviderSetting.MiniMaxSetting.BaseUrl);
+                _apiKey = SettingsService.Setting.ProviderSetting.MiniMaxSetting.ApiKey;
+                SettingsService.Setting.ProviderSetting.MiniMaxSetting.WhenAnyValue(
+                    x => x.BaseUrl,
+                    x => x.ApiKey).Subscribe(_ =>
+                    {
+                        _baseUrl = ProviderUrlHelper.NormalizeMiniMaxBaseUrl(SettingsService.Setting.ProviderSetting.MiniMaxSetting.BaseUrl);
+                        _apiKey = SettingsService.Setting.ProviderSetting.MiniMaxSetting.ApiKey;
+                    });
             }
             internal async Task GenerateAudioAsync(MiniMaxOption option, CancellationToken? cts)
             {

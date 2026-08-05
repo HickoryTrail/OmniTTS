@@ -15,7 +15,7 @@
     <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Margin="10,8,10,8">
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,6">
 		    <ci:IconText Glyph="&#xEAB0;" Text="启用提供方: " Width="100"/>
-            <ToggleSwitch IsChecked="{Binding IsEnabled}"/>
+            <ToggleSwitch IsChecked="{Binding IsEnabled}" IsEnabled="{Binding IsConfigValid}"/>
         </StackPanel>
 		<StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,6">
 		    <ci:IconText Glyph="&#xEAB0;" Text="基础 URL: " Width="100"/>

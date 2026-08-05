@@ -1,7 +1,10 @@
 using System.Globalization;
 using System.Net;
 using System.Text.Json;
+using ClassIsland.Shared;
 using OmniTTS.Plugin.Helper;
+using OmniTTS.Plugin.Services;
+using ReactiveUI;
 using RestSharp;
 
 namespace OmniTTS.Plugin.Infrastructures
@@ -25,19 +28,27 @@ namespace OmniTTS.Plugin.Infrastructures
             private const int SampleRate = 24000;
             private const short Channels = 1;
             private const short BitsPerSample = 16;
-            private readonly string _apiKey;
-            private readonly string _baseUrl;
+            private string _apiKey;
+            private string _baseUrl;
+            private SettingsService SettingsService { get; set; }
 
             internal GeminiClient(string base_url, string apiKey)
             {
+                SettingsService = IAppHost.GetService<SettingsService>();
                 _baseUrl = ProviderUrlHelper.NormalizeGeminiBaseUrl(base_url);
                 _apiKey = apiKey;
             }
 
             internal GeminiClient()
             {
-                _baseUrl = ProviderUrlHelper.NormalizeGeminiBaseUrl("");
-                _apiKey = "";
+                SettingsService = IAppHost.GetService<SettingsService>();
+                _baseUrl = ProviderUrlHelper.NormalizeGeminiBaseUrl(SettingsService.Setting.ProviderSetting.GeminiSetting.BaseUrl);
+                _apiKey = SettingsService.Setting.ProviderSetting.GeminiSetting.ApiKey;
+                SettingsService.Setting.ProviderSetting.GeminiSetting.WhenAnyValue(x => x.BaseUrl, x => x.ApiKey).Subscribe(_ =>
+                {
+                    _baseUrl = ProviderUrlHelper.NormalizeGeminiBaseUrl(SettingsService.Setting.ProviderSetting.GeminiSetting.BaseUrl);
+                    _apiKey = SettingsService.Setting.ProviderSetting.GeminiSetting.ApiKey;
+                });
             }
 
             internal async Task GenerateAudioAsync(GeminiOption option, CancellationToken? cts)

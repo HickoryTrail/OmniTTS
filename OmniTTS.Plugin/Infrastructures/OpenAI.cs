@@ -2,6 +2,9 @@ using OpenAI;
 using OpenAI.Audio;
 using OmniTTS.Plugin.Helper;
 using System.ClientModel;
+using OmniTTS.Plugin.Services;
+using ClassIsland.Shared;
+using ReactiveUI;
 
 namespace OmniTTS.Plugin.Infrastructures
 {
@@ -21,17 +24,27 @@ namespace OmniTTS.Plugin.Infrastructures
 
         internal class OpenAIClient
         {
-            private readonly string _apiKey;
-            private readonly string _baseUrl;
+            private string _apiKey;
+            private string _baseUrl;
+            private SettingsService SettingsService { get; set; }
             internal OpenAIClient(string base_url, string apiKey)
             {
+                SettingsService = IAppHost.GetService<SettingsService>();
                 _baseUrl = ProviderUrlHelper.NormalizeOpenAIBaseUrl(base_url);
                 _apiKey = apiKey;
             }
             internal OpenAIClient()
             {
-                _baseUrl = ProviderUrlHelper.NormalizeOpenAIBaseUrl("");
-                _apiKey = "";
+                SettingsService = IAppHost.GetService<SettingsService>();
+                _baseUrl = ProviderUrlHelper.NormalizeOpenAIBaseUrl(SettingsService.Setting.ProviderSetting.OpenAISetting.BaseUrl);
+                _apiKey = SettingsService.Setting.ProviderSetting.OpenAISetting.ApiKey;
+                SettingsService.Setting.ProviderSetting.OpenAISetting.WhenAnyValue(
+                    x => x.BaseUrl,
+                    x => x.ApiKey).Subscribe(_ =>
+                    {
+                        _baseUrl = ProviderUrlHelper.NormalizeOpenAIBaseUrl(SettingsService.Setting.ProviderSetting.OpenAISetting.BaseUrl);
+                        _apiKey = SettingsService.Setting.ProviderSetting.OpenAISetting.ApiKey;
+                    });
             }
             internal async Task GenerateAudioAsync(OpenAIOption option, CancellationToken? cts)
             {

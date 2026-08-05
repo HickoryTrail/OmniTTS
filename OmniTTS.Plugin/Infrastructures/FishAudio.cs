@@ -1,6 +1,9 @@
 using System.Net;
 using RestSharp;
 using OmniTTS.Plugin.Helper;
+using OmniTTS.Plugin.Services;
+using ClassIsland.Shared;
+using ReactiveUI;
 
 namespace OmniTTS.Plugin.Infrastructures
 {
@@ -20,17 +23,25 @@ namespace OmniTTS.Plugin.Infrastructures
 
         internal class FishAudioClient
         {
-            private readonly string _apiKey;
-            private readonly string _baseUrl;
+            private string _apiKey;
+            private string _baseUrl;
+            private SettingsService SettingsService { get; set; }
             internal FishAudioClient(string base_url,string apiKey)
             {
+                SettingsService = IAppHost.GetService<SettingsService>();
                 _baseUrl = ProviderUrlHelper.NormalizeFishAudioBaseUrl(base_url);
                 _apiKey = apiKey;
             }
             internal FishAudioClient()
             {
-                _baseUrl = ProviderUrlHelper.NormalizeFishAudioBaseUrl("");
-                _apiKey = "";
+                SettingsService = IAppHost.GetService<SettingsService>();
+                _baseUrl = ProviderUrlHelper.NormalizeFishAudioBaseUrl(SettingsService.Setting.ProviderSetting.FishAudioSetting.BaseUrl);
+                _apiKey = SettingsService.Setting.ProviderSetting.FishAudioSetting.ApiKey;
+                SettingsService.Setting.ProviderSetting.FishAudioSetting.WhenAnyValue(x => x.BaseUrl, x => x.ApiKey).Subscribe(_ =>
+                {
+                    _baseUrl = ProviderUrlHelper.NormalizeFishAudioBaseUrl(SettingsService.Setting.ProviderSetting.FishAudioSetting.BaseUrl);
+                    _apiKey = SettingsService.Setting.ProviderSetting.FishAudioSetting.ApiKey;
+                });
             }
             internal async Task GenerateAudioAsync(FishAudioOption option, CancellationToken? cts)
             {

@@ -38,7 +38,12 @@ namespace OmniTTS.Plugin.Services
         // Play Audio
         public async Task PlayAudioAsync(TtsOption option, CancellationToken cts)
         {
-            if (CheckOption(option.Text, cts)) return;
+            if (!CheckOption(option.Text, cts))
+            {
+                Logger.LogWarning($"Request canceled: {option.Text}");
+                return;
+            }
+            Logger.LogInformation($"Start to process: {option.Text}");
             string filename = await GenerateCacheAsync(option, cts);
 
             // Play file
@@ -48,12 +53,14 @@ namespace OmniTTS.Plugin.Services
                 Volume = 1.0f,
                 Cts = cts
             };
+            Logger.LogTrace($"Start to play: {option.Text}");
             await AudioPlayChannel.Writer.WriteAsync(playOption, cts);
             await playOption.Completion.Task.WaitAsync(cts);
+            Logger.LogInformation($"Finished processing: {option.Text}");
         }
         public async Task PlayAudioAsync(string text, CancellationToken cts)
         {
-            if (CheckOption(text, cts)) return;
+            if (!CheckOption(text, cts)) return;
 
             var option = new TtsOption
             {
@@ -65,12 +72,12 @@ namespace OmniTTS.Plugin.Services
         }
         public void PlayAudio(TtsOption option, CancellationToken cts)
         {
-            if (CheckOption(option.Text, cts)) return;
+            if (!CheckOption(option.Text, cts)) return;
             _ = SafeRunAsync(option, cts, PlayAudioAsync);
         }
         public void PlayAudio(string text, CancellationToken cts)
         {
-            if (CheckOption(text, cts)) return;
+            if (!CheckOption(text, cts)) return;
             _ = SafeRunAsync(text, cts, PlayAudioAsync);
         }
         public void CancelAllAudio()
@@ -84,9 +91,15 @@ namespace OmniTTS.Plugin.Services
         // Generate Cache
         public async Task<string> GenerateCacheAsync(TtsOption option, CancellationToken cts)
         {
-            if (CheckOption(option.Text, cts)) return String.Empty;
+            if (!CheckOption(option.Text, cts)) return String.Empty;
             FormatTtsOption(option);
             var filename = GetFilePath(option);
+            if (File.Exists(filename))
+            {
+                Logger.LogInformation($"GenerationService skipped: {option.Text} [{filename}]");
+                return filename;
+            }
+            Logger.LogTrace($"Start to generate: {option.Text} [{filename}]");
             RequestOption options = new RequestOption
             {
                 Provider = option.Provider ?? throw new ArgumentNullException(nameof(option)),
@@ -115,7 +128,7 @@ namespace OmniTTS.Plugin.Services
         }
         public async Task<string> GenerateCacheAsync(string text, CancellationToken cts)
         {
-            if (CheckOption(text, cts)) return String.Empty;
+            if (!CheckOption(text, cts)) return String.Empty;
 
             var option = new TtsOption
             {
@@ -127,12 +140,12 @@ namespace OmniTTS.Plugin.Services
         }
         public void GenerateCache(TtsOption option, CancellationToken cts)
         {
-            if (CheckOption(option.Text, cts)) return;
+            if (!CheckOption(option.Text, cts)) return;
             _ = SafeRunAsync(option, cts, GenerateCacheAsync);
         }
         public void GenerateCache(string text, CancellationToken cts)
         {
-            if (CheckOption(text, cts)) return;
+            if (!CheckOption(text, cts)) return;
             _ = SafeRunAsync(text, cts, GenerateCacheAsync);
         }
 
@@ -143,7 +156,7 @@ namespace OmniTTS.Plugin.Services
             List<RequestOption> requestOptions = new();
             foreach (var option in options)
             {
-                if (CheckOption(option.Text, cts)) continue;
+                if (!CheckOption(option.Text, cts)) continue;
                 FormatTtsOption(option);
                 result.Add(option.Text, GetFilePath(option));
                 RequestOption r_options = new RequestOption
@@ -179,7 +192,7 @@ namespace OmniTTS.Plugin.Services
             List<TtsOption> options = new();
             foreach (var text in texts)
             {
-                if (CheckOption(text, cts)) continue;
+                if (!CheckOption(text, cts)) continue;
                 var option = new TtsOption
                 {
                     Text = text
@@ -241,7 +254,7 @@ namespace OmniTTS.Plugin.Services
                 Volume = 1.0f
             };
             string optionJson = System.Text.Json.JsonSerializer.Serialize(hash_option);
-            string optionHash = Convert.ToBase64String(System.Security.Cryptography.MD5.HashData(Encoding.UTF8.GetBytes(optionJson)));
+            string optionHash = Convert.ToHexString(System.Security.Cryptography.MD5.HashData(Encoding.UTF8.GetBytes(optionJson)));
             return Path.Combine(SettingsService?.PluginConfigFolder ?? "", "Cache", $"{optionHash}.mp3");
         }
         private void FormatTtsOption(TtsOption option)

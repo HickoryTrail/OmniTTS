@@ -1,6 +1,9 @@
 using System.Net;
 using System.Text.Json;
+using ClassIsland.Shared;
 using OmniTTS.Plugin.Helper;
+using OmniTTS.Plugin.Services;
+using ReactiveUI;
 using RestSharp;
 
 namespace OmniTTS.Plugin.Infrastructures
@@ -21,18 +24,28 @@ namespace OmniTTS.Plugin.Infrastructures
 
         internal class MiMoClient
         {
-            private readonly string _apiKey;
-            private readonly string _baseUrl;
+            private string _apiKey;
+            private string _baseUrl;
+            private SettingsService SettingsService { get; set; }
 
             internal MiMoClient(string baseUrl, string apiKey)
             {
+                SettingsService = IAppHost.GetService<SettingsService>();
                 _baseUrl = ProviderUrlHelper.NormalizeMiMoBaseUrl(baseUrl);
                 _apiKey = apiKey;
             }
             internal MiMoClient()
             {
-                _baseUrl = ProviderUrlHelper.NormalizeOpenAIBaseUrl("");
-                _apiKey = "";
+                SettingsService = IAppHost.GetService<SettingsService>();
+                _baseUrl = ProviderUrlHelper.NormalizeMiMoBaseUrl(SettingsService.Setting.ProviderSetting.MiMoSetting.BaseUrl);
+                _apiKey = SettingsService.Setting.ProviderSetting.MiMoSetting.ApiKey;
+                SettingsService.Setting.ProviderSetting.MiMoSetting.WhenAnyValue(
+                    x => x.BaseUrl,
+                    x => x.ApiKey).Subscribe(_ =>
+                    {
+                        _baseUrl = ProviderUrlHelper.NormalizeMiMoBaseUrl(SettingsService.Setting.ProviderSetting.MiMoSetting.BaseUrl);
+                        _apiKey = SettingsService.Setting.ProviderSetting.MiMoSetting.ApiKey;
+                    });
             }
 
             internal async Task GenerateAudioAsync(MiMoOption option, CancellationToken? cts)

@@ -5,9 +5,14 @@
 
 id: HickoryTrail.OmniTTS
 name: OmniTTS
-description: 为 ClassIsland 提供丰富的 TTS 提供方。
+description: 多服务商 TTS API 聚合平台
 entranceAssembly: "OmniTTS.Plugin.dll"
 url: https://github.com/HickoryTrail/OmniTTS
 version: 1.0.0.0
 apiVersion: 2.1.1.0
 author: HickoryTrail
+icon: icon.png
+repoOwner: HickoryTrail
+repoName: OmniTTS
+assetsRoot: master/OmniTTS.Plugin/
+artifactName: OmniTTS.Plugin.cipx

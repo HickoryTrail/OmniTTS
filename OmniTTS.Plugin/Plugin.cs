@@ -20,7 +20,7 @@ namespace OmniTTS.Plugin
             services.AddSingleton<GenerationService>();
             services.AddSingleton<AudioService>();
             services.AddSingleton<IOmniTTS, OmniTTService>();
-            services.AddSingleton<ISpeechService, OmniSpeechService>();
+            services.AddSpeechProvider<OmniSpeechService>();
             services.AddSettingsPage<OmniTTSettingsPage>();
             AppBase.Current.AppStarted += async (_, _) =>
             {

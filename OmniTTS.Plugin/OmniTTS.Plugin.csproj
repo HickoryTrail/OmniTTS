@@ -18,11 +18,46 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <None Remove="Assets\elevenlabs-black.svg" />
+      <None Remove="Assets\elevenlabs-white.svg" />
+      <None Remove="Assets\fishaudio-black.svg" />
+      <None Remove="Assets\fishaudio-white.svg" />
+      <None Remove="Assets\gemini-black.svg" />
+      <None Remove="Assets\gemini-white.svg" />
+      <None Remove="Assets\minimax-black.svg" />
+      <None Remove="Assets\minimax-white.svg" />
+      <None Remove="Assets\openai-black.svg" />
+      <None Remove="Assets\openai-white.svg" />
+      <None Remove="Assets\qwen-black.svg" />
+      <None Remove="Assets\qwen-white.svg" />
+      <None Remove="Assets\xiaomimimo-black.svg" />
+      <None Remove="Assets\xiaomimimo-white.svg" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AvaloniaResource Include="Assets\elevenlabs-black.svg" />
+      <AvaloniaResource Include="Assets\elevenlabs-white.svg" />
+      <AvaloniaResource Include="Assets\fishaudio-black.svg" />
+      <AvaloniaResource Include="Assets\fishaudio-white.svg" />
+      <AvaloniaResource Include="Assets\gemini-black.svg" />
+      <AvaloniaResource Include="Assets\gemini-white.svg" />
+      <AvaloniaResource Include="Assets\minimax-black.svg" />
+      <AvaloniaResource Include="Assets\minimax-white.svg" />
+      <AvaloniaResource Include="Assets\openai-black.svg" />
+      <AvaloniaResource Include="Assets\openai-white.svg" />
+      <AvaloniaResource Include="Assets\qwen-black.svg" />
+      <AvaloniaResource Include="Assets\qwen-white.svg" />
+      <AvaloniaResource Include="Assets\xiaomimimo-black.svg" />
+      <AvaloniaResource Include="Assets\xiaomimimo-white.svg" />
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="ClassIsland.PluginSdk" Version="2.1.1">
             <ExcludeAssets>runtime; native</ExcludeAssets>
         </PackageReference>
         <PackageReference Include="RestSharp" Version="114.0.0" />
         <PackageReference Include="OpenAI" Version="2.12.0" />
+        <PackageReference Include="Svg.Controls.Skia.Avalonia" Version="12.0.0.13" />
     </ItemGroup>
 
     <ItemGroup>
@@ -40,5 +75,20 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
+
+    <Target Name="CopySvgRuntimeDependencies" AfterTargets="Build">
+        <ItemGroup>
+            <SvgRuntimeDependency Include="$(NuGetPackageRoot)svg.controls.skia.avalonia\12.0.0.13\lib\$(TargetFramework)\Svg.Controls.Skia.Avalonia.dll" />
+            <SvgRuntimeDependency Include="$(NuGetPackageRoot)svg.animation\5.1.1\lib\$(TargetFramework)\Svg.Animation.dll" />
+            <SvgRuntimeDependency Include="$(NuGetPackageRoot)svg.custom\5.1.1\lib\$(TargetFramework)\Svg.Custom.dll" />
+            <SvgRuntimeDependency Include="$(NuGetPackageRoot)svg.model\5.1.1\lib\$(TargetFramework)\Svg.Model.dll" />
+            <SvgRuntimeDependency Include="$(NuGetPackageRoot)svg.scenegraph\5.1.1\lib\$(TargetFramework)\Svg.SceneGraph.dll" />
+            <SvgRuntimeDependency Include="$(NuGetPackageRoot)svg.skia\5.1.1\lib\$(TargetFramework)\Svg.Skia.dll" />
+            <SvgRuntimeDependency Include="$(NuGetPackageRoot)shimskiaSharp\5.1.1\lib\$(TargetFramework)\ShimSkiaSharp.dll" />
+            <NugetRuntimeDependency Include="$(NuGetPackageRoot)openai\2.12.0\lib\$(TargetFramework)\OpenAI.dll" />
+            <NugetRuntimeDependency Include="$(NuGetPackageRoot)restsharp\114.0.0\lib\$(TargetFramework)\RestSharp.dll" />
+        </ItemGroup>
+        <Copy SourceFiles="@(SvgRuntimeDependency);@(NugetRuntimeDependency)" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true" />
+    </Target>
 
 </Project>
