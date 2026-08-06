@@ -84,7 +84,7 @@
             <SvgRuntimeDependency Include="$(NuGetPackageRoot)svg.model\5.1.1\lib\$(TargetFramework)\Svg.Model.dll" />
             <SvgRuntimeDependency Include="$(NuGetPackageRoot)svg.scenegraph\5.1.1\lib\$(TargetFramework)\Svg.SceneGraph.dll" />
             <SvgRuntimeDependency Include="$(NuGetPackageRoot)svg.skia\5.1.1\lib\$(TargetFramework)\Svg.Skia.dll" />
-            <SvgRuntimeDependency Include="$(NuGetPackageRoot)shimskiaSharp\5.1.1\lib\$(TargetFramework)\ShimSkiaSharp.dll" />
+            <SvgRuntimeDependency Include="$(NuGetPackageRoot)shimskiasharp\5.1.1\lib\$(TargetFramework)\ShimSkiaSharp.dll" />
             <NugetRuntimeDependency Include="$(NuGetPackageRoot)openai\2.12.0\lib\$(TargetFramework)\OpenAI.dll" />
             <NugetRuntimeDependency Include="$(NuGetPackageRoot)restsharp\114.0.0\lib\$(TargetFramework)\RestSharp.dll" />
         </ItemGroup>
