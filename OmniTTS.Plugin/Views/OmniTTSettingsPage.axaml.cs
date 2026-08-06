@@ -5,6 +5,7 @@ using ClassIsland.Core.Attributes;
 using ClassIsland.Core.Enums.SettingsWindow;
 using ClassIsland.Shared;
 using FluentAvalonia.UI.Controls;
+using Google.Protobuf.Reflection;
 using OmniTTS.Plugin.Services;
 using OmniTTS.Plugin.ViewModels;
 using OmniTTS.Shared;
@@ -15,12 +16,15 @@ namespace OmniTTS.Plugin;
 public partial class OmniTTSettingsPage : SettingsPageBase
 {
     private readonly SettingsService _settingsService;
+    private readonly OmniTTService _omniTTSService;
 
     public OmniTTSettingsPage()
     {
         InitializeComponent();
         _settingsService = IAppHost.GetService<SettingsService>()
             ?? throw new InvalidOperationException("SettingsService is unavailable.");
+        _omniTTSService = IAppHost.GetService<IOmniTTS>() as OmniTTService
+            ?? throw new InvalidOperationException("OmniTTService is unavailable.");
         SelectDefaultProvider();
     }
 
@@ -73,6 +77,27 @@ public partial class OmniTTSettingsPage : SettingsPageBase
         if (object.Equals(await dialog.ShowAsync(true), FATaskDialogStandardResult.OK))
         {
             ((ProviderEditorViewModel)editor.DataContext!).SaveContext();
+        }
+    }
+
+    private async void ClearCache_Click(object? sender, RoutedEventArgs e)
+    {
+        var dialog = new FATaskDialog
+        {
+            Header = "清除缓存",
+            FooterVisibility = FATaskDialogFooterVisibility.Never,
+            Content = "确认清除所有语音缓存？\n\n此操作不可逆！",
+            XamlRoot = TopLevel.GetTopLevel(this)
+                ?? throw new InvalidOperationException("Unable to resolve the settings window."),
+            Buttons =
+            {
+                FATaskDialogButton.YesButton,
+                FATaskDialogButton.CancelButton
+            }
+        };
+        if (object.Equals(await dialog.ShowAsync(true), FATaskDialogStandardResult.Yes))
+        {
+            await _omniTTSService.ClearCache();
         }
     }
 }

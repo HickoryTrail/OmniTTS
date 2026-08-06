@@ -116,6 +116,17 @@
             </fa:FASettingsExpanderItem.Content>
         </fa:FASettingsExpanderItem>
       </fa:FASettingsExpander>
+
+        <ci:IconText Glyph="&#xE77D;" Text="缓存设置" />
+        <fa:FASettingsExpander IconSource="{ci:FluentIconSource &#xE61D;}" Header="清除缓存" Description="清除之前生成的所有语音缓存">
+			<fa:FASettingsExpander.Footer>
+				<Button Click="ClearCache_Click" Width="120" Background="Red">
+				    <Button.Content>
+						<ci:IconText Glyph="&#xE61D;" Text="清除缓存"/>
+                    </Button.Content>	
+                </Button>
+            </fa:FASettingsExpander.Footer>
+        </fa:FASettingsExpander>
     </StackPanel>
   </ScrollViewer>
 </ci2:SettingsPageBase>

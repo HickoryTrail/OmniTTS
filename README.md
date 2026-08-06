@@ -1,21 +1,22 @@
 <div align="center">
 
 # <image src="assests/Logo.png" Height="28" Width="28"/> OmniTTS <br>
+
 <image src="assests/Banner-Dark.png"/>
 
 [![正式版 Release](https://img.shields.io/github/v/release/HickoryTrail/OmniTTS?style=flat-square&color=%233fb950&label=正式版)](https://github.com/HickoryTrail/OmniTTS/releases/latest)
 [![下载量](https://img.shields.io/github/downloads/HickoryTrail/OmniTTS/total?style=social&label=下载量&logo=github)](https://github.com/HickoryTrail/OmniTTS/releases/latest)
 [![GitHub Repo Languages](https://img.shields.io/github/languages/top/HickoryTrail/OmniTTS?style=flat-square)](https://github.com/HickoryTrail/OmniTTS/search?l=c%23)
-</div>
 
+</div>
 
 OmniTTS 是面向 [ClassIsland 2.x](https://github.com/ClassIsland/ClassIsland) 的多提供方 TTS 插件：把不同云端语音服务统一成一个配置入口和一套 .NET API，让课堂播报、通知和自动化脚本都能用同样的方式生成并播放语音。
 
 ## 为什么选择 OmniTTS
 
-- **一个入口，多种提供方**：OpenAI、Gemini、FishAudio、ElevenLabs、MiniMax、MiMo。
+- **一个入口，多种提供方**：OpenAI、FishAudio、MiMo等。
 - **直接播放或只生成缓存**：适合实时播报，也适合预生成提示音、批量生成音频。
-- **统一参数模型**：提供方、模型、音色、语速、音量和文本由 `TtsOption` 描述。
+- **统一参数模型**：提供方、模型、音色、语速、音量和文本由统一结构描述。
 - **并发与取消**：后台生成队列支持并发数配置；播放任务可取消或清空。
 - **可扩展集成**：`OmniTTS.Shared` 提供公开的 `IOmniTTS` 接口，其他 ClassIsland 插件可直接注入使用。
 
@@ -25,9 +26,9 @@ OmniTTS 是面向 [ClassIsland 2.x](https://github.com/ClassIsland/ClassIsland) 
 
 ## 快速开始
 
-1. 从 [Releases](https://github.com/HickoryTrail/OmniTTS/Release) 或 ClassIsland 插件市场下载 `OmniTTS.Plugin.cipx`，在 ClassIsland 的插件管理器中安装。
+1. 从 [Releases](https://github.com/HickoryTrail/OmniTTS/Release) 或 ClassIsland 插件市场下载 `HickoryTrail.OmniTTS.cipx`，在 ClassIsland 的插件管理器中安装。
 2. 打开 **设置 → OmniTTS 设置**，启用至少一个提供方并填写 API Key、模型和音色。
-3. 选择默认提供方并保存。
+3. 选择默认提供方。
 4. 在 ClassIsland 中触发语音，或参考 [Shared API 文档](OmniTTS.Shared/README.md) 在自己的插件中调用。
 
 插件的详细配置、发布和排错步骤见 [OmniTTS.Plugin/README.md](OmniTTS.Plugin/README.md)。
