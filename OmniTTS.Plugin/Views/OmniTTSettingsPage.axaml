@@ -15,47 +15,21 @@
 			<ResourceDictionary.ThemeDictionaries>
 			    <ResourceDictionary x:Key="Light">
                     <x:String x:Key="OpenAI_Icon">avares://OmniTTS.Plugin/Assets/openai-black.svg</x:String>
-                    <x:String x:Key="Gemini_Icon">
-                        avares://OmniTTS.Plugin/Assets/gemini-black.svg
-                    </x:String>
-                    <x:String x:Key="FishAudio_Icon">
-                        avares://OmniTTS.Plugin/Assets/elevenlabs-black.svg
-                    </x:String>
-                    <x:String x:Key="ElevenLabs_Icon">
-                        avares://OmniTTS.Plugin/Assets/elevenlabs-black.svg
-                    </x:String>
-                    <x:String x:Key="MiniMax_Icon">
-                        avares://OmniTTS.Plugin/Assets/minimax-black.svg
-                    </x:String>
-                    <x:String x:Key="Qwen_Icon">
-                        avares://OmniTTS.Plugin/Assets/qwen-black.svg
-                    </x:String>
-                    <x:String x:Key="MiMo_Icon">
-                        avares://OmniTTS.Plugin/Assets/xiaomimimo-black.svg
-                    </x:String>
+                    <x:String x:Key="Gemini_Icon">avares://OmniTTS.Plugin/Assets/gemini-black.svg</x:String>
+                    <x:String x:Key="FishAudio_Icon">avares://OmniTTS.Plugin/Assets/fishaudio-black.svg</x:String>
+                    <x:String x:Key="ElevenLabs_Icon">avares://OmniTTS.Plugin/Assets/elevenlabs-black.svg</x:String>
+                    <x:String x:Key="MiniMax_Icon">avares://OmniTTS.Plugin/Assets/minimax-black.svg</x:String>
+                    <x:String x:Key="Qwen_Icon">avares://OmniTTS.Plugin/Assets/qwen-black.svg</x:String>
+                    <x:String x:Key="MiMo_Icon">avares://OmniTTS.Plugin/Assets/xiaomimimo-black.svg</x:String>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
-                    <x:String x:Key="OpenAI_Icon">
-                        avares://OmniTTS.Plugin/Assets/openai-white.svg
-                    </x:String>
-                    <x:String x:Key="Gemini_Icon">
-                        avares://OmniTTS.Plugin/Assets/gemini-white.svg
-                    </x:String>
-                    <x:String x:Key="FishAudio_Icon">
-                        avares://OmniTTS.Plugin/Assets/fishaudio-white.svg
-                    </x:String>
-                    <x:String x:Key="ElevenLabs_Icon">
-                        avares://OmniTTS.Plugin/Assets/elevenlabs-white.svg
-                    </x:String>
-                    <x:String x:Key="MiniMax_Icon">
-                        avares://OmniTTS.Plugin/Assets/minimax-white.svg
-                    </x:String>
-                    <x:String x:Key="Qwen_Icon">
-                        avares://OmniTTS.Plugin/Assets/qwen-white.svg
-                    </x:String>
-                    <x:String x:Key="MiMo_Icon">
-                        avares://OmniTTS.Plugin/Assets/xiaomimimo-white.svg
-                    </x:String>
+                    <x:String x:Key="OpenAI_Icon">avares://OmniTTS.Plugin/Assets/openai-white.svg</x:String>
+                    <x:String x:Key="Gemini_Icon">avares://OmniTTS.Plugin/Assets/gemini-white.svg</x:String>
+                    <x:String x:Key="FishAudio_Icon">avares://OmniTTS.Plugin/Assets/fishaudio-white.svg</x:String>
+                    <x:String x:Key="ElevenLabs_Icon">avares://OmniTTS.Plugin/Assets/elevenlabs-white.svg</x:String>
+                    <x:String x:Key="MiniMax_Icon">avares://OmniTTS.Plugin/Assets/minimax-white.svg</x:String>
+                    <x:String x:Key="Qwen_Icon">avares://OmniTTS.Plugin/Assets/qwen-white.svg</x:String>
+                    <x:String x:Key="MiMo_Icon">avares://OmniTTS.Plugin/Assets/xiaomimimo-white.svg</x:String>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
@@ -120,7 +94,7 @@
         <fa:FASettingsExpanderItem Tag="Elevenlabs" IsClickEnabled="True" Click="Provider_Click">
 			<fa:FASettingsExpanderItem.Content>
 				<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-					<svg:Svg Path="{DynamicResource ELevenLabs_Icon}" VerticalAlignment="Center" Height="20" Width="20"/>
+					<svg:Svg Path="{DynamicResource ElevenLabs_Icon}" VerticalAlignment="Center" Height="20" Width="20"/>
                     <TextBlock Text="ElevenLabs" Margin="6,0" VerticalAlignment="Center"/>
                 </StackPanel>
             </fa:FASettingsExpanderItem.Content>
