@@ -10,28 +10,42 @@
               x:Class="OmniTTS.Plugin.ProviderEditor"
               x:DataType="vm:ProviderEditorViewModel">
     <UserControl.DataContext>
-		<vm:ProviderEditorViewModel />
+        <vm:ProviderEditorViewModel />
     </UserControl.DataContext>
     <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Margin="10,8,10,8">
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,6">
-		    <ci:IconText Glyph="&#xEAB0;" Text="启用提供方: " Width="100"/>
+            <ci:IconText Glyph="&#xEAB0;" Text="启用提供方: " Width="100"/>
             <ToggleSwitch IsChecked="{Binding IsEnabled}" IsEnabled="{Binding IsConfigValid}"/>
         </StackPanel>
-		<StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,6">
-		    <ci:IconText Glyph="&#xEAB0;" Text="基础 URL: " Width="100"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,6">
+            <ci:IconText Glyph="&#xEAB0;" Text="基础 URL: " Width="100"/>
             <TextBox Width="300" VerticalAlignment="Center" Text="{Binding BaseUrl}"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,6">
-		    <ci:IconText Glyph="&#xEA01;" Text="API 密钥: " Width="100"/>
+            <ci:IconText Glyph="&#xEA01;" Text="API 密钥: " Width="100"/>
             <TextBox RevealPassword="True" PasswordChar="*" Width="300" VerticalAlignment="Center" Classes.revealPasswordButton="True" Text="{Binding ApiKey}"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,6">
-		    <ci:IconText Glyph="&#xE27E;" Text="语音模型: " Width="100"/>
+            <ci:IconText Glyph="&#xE27E;" Text="语音模型: " Width="100"/>
             <TextBox Width="300" VerticalAlignment="Center" Text="{Binding Model}"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,6">
-		    <ci:IconText Glyph="&#xECC5;" Text="音色 ID: " Width="100"/>
+            <ci:IconText Glyph="&#xECC5;" Text="音色 ID: " Width="100"/>
             <TextBox Width="300" VerticalAlignment="Center" Text="{Binding VoiceId}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,6">
+            <ci:IconText Glyph="&#xF373;" Text="朗读语速: " Width="100"/>
+	        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+		        <TextBlock Text="{Binding Speed, StringFormat=F1}" Width="40" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <Slider Width="250" IsEnabled="{Binding IsSpeedAvailable}" Minimum="{Binding MinSpeed}" Maximum="{Binding MaxSpeed}" Value="{Binding Speed}" TickFrequency="0.1" IsSnapToTickEnabled="True"/>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,6">
+            <ci:IconText Glyph="&#xF00D;" Text="播放音量: " Width="100"/>
+	        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+		        <TextBlock Text="{Binding Volume, StringFormat=F2}" Width="40" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <Slider Width="250" Minimum="0" Maximum="1" Value="{Binding Volume}" TickFrequency="0.1" IsSnapToTickEnabled="True"/>
+            </StackPanel>
         </StackPanel>
     </StackPanel>
 </UserControl>

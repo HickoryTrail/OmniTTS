@@ -50,7 +50,7 @@ namespace OmniTTS.Plugin.Services
             var playOption = new PlayOption
             {
                 FilePath = filename,
-                Volume = 1.0f,
+                Volume = option.Volume ?? 1.0f,
                 Cts = cts
             };
             Logger.LogTrace($"Start to play: {option.Text}");
@@ -298,7 +298,6 @@ namespace OmniTTS.Plugin.Services
                 case Provider.MiMo:
                     model = SettingsService.Setting.ProviderSetting.MiMoSetting.Model;
                     voice = SettingsService.Setting.ProviderSetting.MiMoSetting.Voice;
-                    speed = SettingsService.Setting.ProviderSetting.MiMoSetting.Speed;
                     volume = SettingsService.Setting.ProviderSetting.MiMoSetting.Volume;
                     break;
             }

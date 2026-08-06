@@ -128,7 +128,6 @@ namespace OmniTTS.Plugin.Services
                             Model = requestOption.Model,
                             Voice = requestOption.Voice,
                             Text = requestOption.Text,
-                            Speed = requestOption.Speed,
                             FilePath = requestOption.FilePath,
                         };
                         await MiMoClient.GenerateAudioAsync(mimoOption, requestOption.Cts);

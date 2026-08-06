@@ -18,7 +18,6 @@ namespace OmniTTS.Plugin.Infrastructures
             internal required string Text { get; set; }
             internal required string Model { get; set; }
             internal required string Voice { get; set; }
-            internal required float Speed { get; set; }
             internal required string FilePath { get; set; }
         }
 

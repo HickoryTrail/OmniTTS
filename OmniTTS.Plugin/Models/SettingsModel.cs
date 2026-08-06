@@ -324,12 +324,6 @@ namespace OmniTTS.Plugin.Models
                     get => _voice;
                     set => this.RaiseAndSetIfChanged(ref _voice, value);
                 }
-                internal float _speed = 1.0f;
-                internal float Speed
-                {
-                    get => _speed;
-                    set => this.RaiseAndSetIfChanged(ref _speed, value);
-                }
                 internal float _volume = 1.0f;
                 internal float Volume
                 {
