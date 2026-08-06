@@ -1,0 +1,220 @@
+name: Release
+
+on:
+  push:
+    # GitHub Actions tag filters are globs rather than regular expressions.  The
+    # exact four-integer format is verified by the first workflow step.
+    tags:
+      - '*.*.*.*'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build release artifacts
+    runs-on: ubuntu-latest
+    outputs:
+      publish_nuget: ${{ steps.metadata.outputs.publish_nuget }}
+    steps:
+      - name: Check out the release tag
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate tag and primary-branch ancestry
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME}"
+          if [[ ! "$TAG" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "A release tag must have the x.x.x.x format; received: $TAG" >&2
+            exit 1
+          fi
+
+          # Tags do not carry branch information.  Verify that the tagged commit
+          # is reachable from this repository's current primary branch (master).
+          git fetch --force origin master:refs/remotes/origin/master refs/tags/*:refs/tags/*
+          TAG_COMMIT="$(git rev-list -n 1 "$TAG")"
+          if ! git merge-base --is-ancestor "$TAG_COMMIT" origin/master; then
+            echo "Tag $TAG does not point to a commit contained in master." >&2
+            exit 1
+          fi
+
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "nuget_version=${TAG%.*}" >> "$GITHUB_OUTPUT"
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore OmniTTS.slnx
+
+      - name: Decide whether to publish NuGet
+        id: nuget
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="${{ steps.version.outputs.tag }}"
+          NUGET_VERSION="${{ steps.version.outputs.nuget_version }}"
+          PREVIOUS_TAG=""
+
+          while IFS= read -r candidate; do
+            if [[ "$candidate" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ && "$candidate" != "$TAG" ]]; then
+              PREVIOUS_TAG="$candidate"
+              break
+            fi
+          done < <(git for-each-ref --format='%(refname:strip=2)' --sort=-creatordate refs/tags)
+
+          PUBLISH_NUGET=true
+          if [[ -n "$PREVIOUS_TAG" && "${PREVIOUS_TAG%.*}" == "$NUGET_VERSION" ]]; then
+            PUBLISH_NUGET=false
+          fi
+
+          echo "previous_tag=$PREVIOUS_TAG" >> "$GITHUB_OUTPUT"
+          echo "publish_nuget=$PUBLISH_NUGET" >> "$GITHUB_OUTPUT"
+          if [[ "$PUBLISH_NUGET" == true ]]; then
+            echo "NuGet version $NUGET_VERSION will be published."
+          else
+            echo "NuGet version $NUGET_VERSION matches previous tag $PREVIOUS_TAG; skipping NuGet publishing."
+          fi
+
+      - name: Pack shared NuGet package
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/nuget
+          dotnet pack OmniTTS.Shared/OmniTTS.Shared.csproj --configuration Release --no-restore \
+            --output artifacts/nuget -p:Version="${{ steps.version.outputs.nuget_version }}"
+
+      - name: Build plugin package
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="${{ steps.version.outputs.tag }}"
+          # This is intentionally only a workspace change in the CI runner.
+          sed -i -E "s/^version: .*/version: ${TAG}/" OmniTTS.Plugin/manifest.yml
+          grep -Fx "version: ${TAG}" OmniTTS.Plugin/manifest.yml
+
+          dotnet publish OmniTTS.Plugin/OmniTTS.Plugin.csproj --configuration Release --no-restore \
+            --output artifacts/plugin
+          find artifacts/plugin -type f -name '*.pdb' -delete
+          (
+            cd artifacts/plugin
+            zip -r ../HickoryTrail.OmniTTS.cipx .
+          )
+
+      - name: Create checksums and release notes
+        id: metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="${{ steps.version.outputs.tag }}"
+          NUGET_PACKAGE="$(find artifacts/nuget -maxdepth 1 -type f -name '*.nupkg' ! -name '*.snupkg' -printf '%f\n')"
+          if [[ "$(printf '%s\n' "$NUGET_PACKAGE" | sed '/^$/d' | wc -l)" != 1 ]]; then
+            echo "Expected exactly one NuGet package, found: $NUGET_PACKAGE" >&2
+            exit 1
+          fi
+          if [[ ! -f "docs/CHANGELOG/${TAG}.md" ]]; then
+            echo "Missing release notes: docs/CHANGELOG/${TAG}.md" >&2
+            exit 1
+          fi
+
+          CIPX_MD5="$(md5sum artifacts/HickoryTrail.OmniTTS.cipx | awk '{print $1}')"
+          NUGET_MD5="$(md5sum "artifacts/nuget/${NUGET_PACKAGE}" | awk '{print $1}')"
+          cp "docs/CHANGELOG/${TAG}.md" artifacts/release-notes.md
+          sed -i \
+            -e "s/<CIPX MD5>/${CIPX_MD5}/g" \
+            -e "s/<NUGET FILENAME>/${NUGET_PACKAGE}/g" \
+            -e "s/<NUGET MD5>/${NUGET_MD5}/g" \
+            artifacts/release-notes.md
+
+          jq -n \
+            --arg tag "$TAG" \
+            --arg nuget_package "$NUGET_PACKAGE" \
+            --arg cipx_package "HickoryTrail.OmniTTS.cipx" \
+            --argjson publish_nuget "${{ steps.nuget.outputs.publish_nuget }}" \
+            '{tag: $tag, nuget_package: $nuget_package, cipx_package: $cipx_package, publish_nuget: $publish_nuget}' \
+            > artifacts/release-metadata.json
+          echo "publish_nuget=${{ steps.nuget.outputs.publish_nuget }}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-artifacts
+          if-no-files-found: error
+          path: |
+            artifacts/nuget/*.nupkg
+            artifacts/HickoryTrail.OmniTTS.cipx
+            artifacts/release-notes.md
+            artifacts/release-metadata.json
+
+  publish:
+    name: Approve and publish release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    # Configure required reviewers for the "release" Environment in the
+    # repository settings.  The job pauses here until that approval is granted.
+    environment:
+      name: release
+    steps:
+      - name: Download release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: release-artifacts
+          path: artifacts
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Authenticate to NuGet.org with Trusted Publishing
+        if: needs.build.outputs.publish_nuget == 'true'
+        id: nuget_login
+        uses: NuGet/login@v1
+        with:
+          # Define NUGET_USERNAME as a variable on the protected "release"
+          # Environment. It is available only after Environment approval.
+          user: ${{ vars.NUGET_USERNAME }}
+
+      - name: Publish NuGet package when its version changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          SHOULD_PUBLISH="$(jq -r '.publish_nuget' artifacts/release-metadata.json)"
+          if [[ "$SHOULD_PUBLISH" != true ]]; then
+            echo "NuGet version is unchanged; publishing skipped."
+            exit 0
+          fi
+          NUGET_PACKAGE="$(jq -r '.nuget_package' artifacts/release-metadata.json)"
+          dotnet nuget push "artifacts/${NUGET_PACKAGE}" \
+            --api-key "${{ steps.nuget_login.outputs.NUGET_API_KEY }}" \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
+
+      - name: Create or update GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="$(jq -r '.tag' artifacts/release-metadata.json)"
+          NUGET_PACKAGE="$(jq -r '.nuget_package' artifacts/release-metadata.json)"
+          CIPX_PACKAGE="$(jq -r '.cipx_package' artifacts/release-metadata.json)"
+
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG" --title "$TAG" --notes-file artifacts/release-notes.md
+            gh release upload "$TAG" "artifacts/${NUGET_PACKAGE}" "artifacts/${CIPX_PACKAGE}" --clobber
+          else
+            gh release create "$TAG" \
+              "artifacts/${NUGET_PACKAGE}" "artifacts/${CIPX_PACKAGE}" \
+              --title "$TAG" \
+              --notes-file artifacts/release-notes.md
+          fi
