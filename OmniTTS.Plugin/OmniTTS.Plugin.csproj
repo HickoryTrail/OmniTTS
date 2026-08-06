@@ -13,7 +13,7 @@
 
     <PropertyGroup Label="Avalonia">
       <AvaloniaUseCompiledBindingsByDefault>True</AvaloniaUseCompiledBindingsByDefault>
-      <AvaloniaXamlIlDebuggerLaunch>True</AvaloniaXamlIlDebuggerLaunch>
+      <AvaloniaXamlIlDebuggerLaunch>false</AvaloniaXamlIlDebuggerLaunch>
       <AvaloniaXamlCreateSourceInfo>True</AvaloniaXamlCreateSourceInfo>
     </PropertyGroup>
 
