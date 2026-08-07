@@ -165,6 +165,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      packages: write
       id-token: write
     # Configure required reviewers for the "release" Environment in the
     # repository settings.  The job pauses here until that approval is granted.
@@ -191,22 +192,36 @@ jobs:
           # Environment. It is available only after Environment approval.
           user: ${{ vars.NUGET_USERNAME }}
 
-      - name: Publish NuGet package when its version changed
+      - name: Publish package to NuGet.org
+        if: needs.build.outputs.publish_nuget == 'true'
         shell: bash
         run: |
           set -euo pipefail
-          SHOULD_PUBLISH="$(jq -r '.publish_nuget' artifacts/release-metadata.json)"
-          if [[ "$SHOULD_PUBLISH" != true ]]; then
-            echo "NuGet version is unchanged; publishing skipped."
-            exit 0
-          fi
           NUGET_PACKAGE="$(jq -r '.nuget_package' artifacts/release-metadata.json)"
           dotnet nuget push "artifacts/nuget/${NUGET_PACKAGE}" \
             --api-key "${{ steps.nuget_login.outputs.NUGET_API_KEY }}" \
             --source https://api.nuget.org/v3/index.json \
             --skip-duplicate
 
-      - name: Create or update GitHub release
+      - name: Publish package to GitHub Packages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          NUGET_PACKAGE="$(jq -r '.nuget_package' artifacts/release-metadata.json)"
+          dotnet nuget add source \
+            "https://nuget.pkg.github.com/HickoryTrail/index.json" \
+            --name github \
+            --username HickoryTrail \
+            --password "$GITHUB_TOKEN" \
+            --store-password-in-clear-text
+          dotnet nuget push "artifacts/nuget/${NUGET_PACKAGE}" \
+            --api-key "$GITHUB_TOKEN" \
+            --source github \
+            --skip-duplicate
+
+      - name: Create or update GitHub release (including nupkg)
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
@@ -215,12 +230,15 @@ jobs:
           TAG="$(jq -r '.tag' artifacts/release-metadata.json)"
           NUGET_PACKAGE="$(jq -r '.nuget_package' artifacts/release-metadata.json)"
           CIPX_PACKAGE="$(jq -r '.cipx_package' artifacts/release-metadata.json)"
+          REPOSITORY="$GITHUB_REPOSITORY"
 
-          if gh release view "$TAG" >/dev/null 2>&1; then
-            gh release edit "$TAG" --title "$TAG" --notes-file artifacts/release-notes.md
-            gh release upload "$TAG" "artifacts/nuget/${NUGET_PACKAGE}" "artifacts/${CIPX_PACKAGE}" --clobber
+          if gh release view "$TAG" --repo "$REPOSITORY" >/dev/null 2>&1; then
+            gh release edit "$TAG" --repo "$REPOSITORY" --title "$TAG" --notes-file artifacts/release-notes.md
+            gh release upload "$TAG" --repo "$REPOSITORY" \
+              "artifacts/nuget/${NUGET_PACKAGE}" "artifacts/${CIPX_PACKAGE}" --clobber
           else
             gh release create "$TAG" \
+              --repo "$REPOSITORY" \
               "artifacts/nuget/${NUGET_PACKAGE}" "artifacts/${CIPX_PACKAGE}" \
               --title "$TAG" \
               --notes-file artifacts/release-notes.md
