@@ -46,9 +46,23 @@ try {
         --output $nugetDirectory "-p:Version=$nugetVersion"
     if ($LASTEXITCODE -ne 0) { throw 'Failed to pack OmniTTS.Shared.' }
 
-    dotnet publish 'OmniTTS.Plugin\OmniTTS.Plugin.csproj' --configuration Release --no-restore `
-        --output $pluginDirectory
-    if ($LASTEXITCODE -ne 0) { throw 'Failed to publish OmniTTS.Plugin.' }
+    # `dotnet publish` copies every transitive runtime asset (including native
+    # Skia/HarfBuzz binaries and symbols for all platforms). The plugin project
+    # intentionally curates its dependencies in its build output, so package
+    # that directory instead.
+    dotnet build 'OmniTTS.Plugin\OmniTTS.Plugin.csproj' --configuration Release --no-restore
+    if ($LASTEXITCODE -ne 0) { throw 'Failed to build OmniTTS.Plugin.' }
+
+    $pluginBuildDirectory = Join-Path $repositoryRoot 'OmniTTS.Plugin\bin\Release\net10.0'
+    if (-not (Test-Path -LiteralPath $pluginBuildDirectory -PathType Container)) {
+        throw "Plugin build output not found: $pluginBuildDirectory"
+    }
+
+    $pluginBuildFiles = @(Get-ChildItem -LiteralPath $pluginBuildDirectory -File)
+    if ($pluginBuildFiles.Count -eq 0) {
+        throw "Plugin build output is empty: $pluginBuildDirectory"
+    }
+    Copy-Item -LiteralPath $pluginBuildFiles.FullName -Destination $pluginDirectory
 }
 finally {
     Pop-Location
