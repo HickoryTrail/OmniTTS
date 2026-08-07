@@ -201,7 +201,7 @@ jobs:
             exit 0
           fi
           NUGET_PACKAGE="$(jq -r '.nuget_package' artifacts/release-metadata.json)"
-          dotnet nuget push "artifacts/${NUGET_PACKAGE}" \
+          dotnet nuget push "artifacts/nuget/${NUGET_PACKAGE}" \
             --api-key "${{ steps.nuget_login.outputs.NUGET_API_KEY }}" \
             --source https://api.nuget.org/v3/index.json \
             --skip-duplicate
@@ -218,10 +218,10 @@ jobs:
 
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release edit "$TAG" --title "$TAG" --notes-file artifacts/release-notes.md
-            gh release upload "$TAG" "artifacts/${NUGET_PACKAGE}" "artifacts/${CIPX_PACKAGE}" --clobber
+            gh release upload "$TAG" "artifacts/nuget/${NUGET_PACKAGE}" "artifacts/${CIPX_PACKAGE}" --clobber
           else
             gh release create "$TAG" \
-              "artifacts/${NUGET_PACKAGE}" "artifacts/${CIPX_PACKAGE}" \
+              "artifacts/nuget/${NUGET_PACKAGE}" "artifacts/${CIPX_PACKAGE}" \
               --title "$TAG" \
               --notes-file artifacts/release-notes.md
           fi
