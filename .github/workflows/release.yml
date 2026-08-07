@@ -82,24 +82,31 @@ jobs:
             echo "NuGet version $NUGET_VERSION matches previous tag $PREVIOUS_TAG; skipping NuGet publishing."
           fi
 
-      - name: Pack shared NuGet package
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p artifacts/nuget
-          dotnet pack OmniTTS.Shared/OmniTTS.Shared.csproj --configuration Release --no-restore \
-            --output artifacts/nuget -p:Version="${{ steps.version.outputs.nuget_version }}"
-
-      - name: Build plugin package
+      - name: Build plugin and generate Shared NuGet package
         shell: bash
         run: |
           set -euo pipefail
           TAG="${{ steps.version.outputs.tag }}"
+          NUGET_VERSION="${{ steps.version.outputs.nuget_version }}"
           # This is intentionally only a workspace change in the CI runner.
           sed -i -E "s/^version: .*/version: ${TAG}/" OmniTTS.Plugin/manifest.yml
           grep -Fx "version: ${TAG}" OmniTTS.Plugin/manifest.yml
 
-          dotnet publish OmniTTS.Plugin/OmniTTS.Plugin.csproj --configuration Release --no-restore \
+          # OmniTTS.Shared has GeneratePackageOnBuild enabled. Building its
+          # Plugin project reference produces the NuGet package, so no separate
+          # dotnet pack invocation is needed.
+          dotnet build OmniTTS.Plugin/OmniTTS.Plugin.csproj --configuration Release --no-restore \
+            -p:Version="${NUGET_VERSION}"
+
+          NUGET_PACKAGE="OmniTTS.Shared/bin/Release/OmniTTS.Shared.${NUGET_VERSION}.nupkg"
+          if [[ ! -f "$NUGET_PACKAGE" ]]; then
+            echo "Expected NuGet package was not generated: $NUGET_PACKAGE" >&2
+            exit 1
+          fi
+          mkdir -p artifacts/nuget
+          cp "$NUGET_PACKAGE" artifacts/nuget/
+
+          dotnet publish OmniTTS.Plugin/OmniTTS.Plugin.csproj --configuration Release --no-build --no-restore \
             --output artifacts/plugin
           find artifacts/plugin -type f -name '*.pdb' -delete
           (
