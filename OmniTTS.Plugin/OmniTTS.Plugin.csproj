@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <ClassIslandPluginSdkVersion>1.7.106.2-dev-v2</ClassIslandPluginSdkVersion>
+        <ClassIslandPluginSdkVersion>2.1.1.1</ClassIslandPluginSdkVersion>
         <AssemblyName>$(MSBuildProjectName)</AssemblyName>
     </PropertyGroup>
 
@@ -52,11 +52,11 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="ClassIsland.PluginSdk" Version="2.1.1">
+        <PackageReference Include="ClassIsland.PluginSdk" Version="2.1.1.1">
             <ExcludeAssets>runtime; native</ExcludeAssets>
         </PackageReference>
         <PackageReference Include="RestSharp" Version="114.0.0" />
-        <PackageReference Include="OpenAI" Version="2.12.0" />
+        <PackageReference Include="OpenAI" Version="2.13.0" />
         <PackageReference Include="Svg.Controls.Skia.Avalonia" Version="12.0.0.13" />
     </ItemGroup>
 
@@ -85,7 +85,7 @@
             <SvgRuntimeDependency Include="$(NuGetPackageRoot)svg.scenegraph\5.1.1\lib\$(TargetFramework)\Svg.SceneGraph.dll" />
             <SvgRuntimeDependency Include="$(NuGetPackageRoot)svg.skia\5.1.1\lib\$(TargetFramework)\Svg.Skia.dll" />
             <SvgRuntimeDependency Include="$(NuGetPackageRoot)shimskiasharp\5.1.1\lib\$(TargetFramework)\ShimSkiaSharp.dll" />
-            <NugetRuntimeDependency Include="$(NuGetPackageRoot)openai\2.12.0\lib\$(TargetFramework)\OpenAI.dll" />
+            <NugetRuntimeDependency Include="$(NuGetPackageRoot)openai\2.13.0\lib\$(TargetFramework)\OpenAI.dll" />
             <NugetRuntimeDependency Include="$(NuGetPackageRoot)restsharp\114.0.0\lib\$(TargetFramework)\RestSharp.dll" />
         </ItemGroup>
         <Copy SourceFiles="@(SvgRuntimeDependency);@(NugetRuntimeDependency)" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true" />
